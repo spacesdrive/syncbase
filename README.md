@@ -4,7 +4,7 @@
 
 # Syncbase
 
-**The collaborative workspace where your team posts, ships, and stays in sync — all in one place.**
+**The collaborative workspace where your team posts, ships, and stays in sync, all in one place.**
 
 [![GitHub Stars](https://img.shields.io/github/stars/spacesdrive/syncbase?style=flat-square&color=FFD700&label=Stars)](https://github.com/spacesdrive/syncbase/stargazers)
 [![License](https://img.shields.io/github/license/spacesdrive/syncbase?style=flat-square&color=4ade80)](https://github.com/spacesdrive/syncbase/blob/main/LICENSE)
@@ -23,9 +23,9 @@
 
 ## What is Syncbase?
 
-Modern teams run across too many disconnected tools — content gets drafted in Notion, tasks live in Jira, social posts go through Buffer, chats happen in Slack, and nobody agrees on where the API keys are stored. Context is constantly lost in the gaps.
+Modern teams run across too many disconnected tools. Content gets drafted in Notion, tasks live in Jira, social posts go through Buffer, chats happen in Slack, and nobody agrees on where the API keys are stored. Context is constantly lost in the gaps.
 
-**Syncbase collapses all of that into a single, real-time workspace.** Your team manages social content, ships tasks, tracks projects, chats, and builds a shared knowledge base — without switching apps.
+**Syncbase collapses all of that into a single, real-time workspace.** Your team manages social content, ships tasks, tracks projects, chats, and builds a shared knowledge base without switching apps.
 
 It is a fully open-source, self-hostable SPA built on React 19, TypeScript, Vite, Tailwind CSS v4, and Supabase. Installable as a PWA. Ships with dark mode, drag-and-drop task boards, role-based permissions, and live presence out of the box.
 
@@ -36,7 +36,7 @@ It is a fully open-source, self-hostable SPA built on React 19, TypeScript, Vite
 | Module | What it does |
 |---|---|
 | **Posts** | Draft, schedule, and track social content across LinkedIn, Instagram, X/Twitter, Facebook, Reddit, YouTube, and Threads. Attach images via Cloudinary, collect emoji reactions, and run a review workflow from draft → approved → posted. |
-| **Work** | Full task management with four views — Kanban, Table, Calendar, and Pods (by assignee). Drag-and-drop reordering, multi-assignee support, priority levels, role-based status transitions, comments, and reactions. |
+| **Work** | Full task management with four views: Kanban, Table, Calendar, and Pods (by assignee). Drag-and-drop reordering, multi-assignee support, priority levels, role-based status transitions, comments, and reactions. |
 | **Projects** | Group tasks under projects. Track progress with a goal checklist. Link tasks directly to project goals. |
 | **Chat** | Real-time team channel and one-to-one direct messages. Edit and delete messages, react with emoji, attach files, and see unread DM counts per member. |
 | **Info Board** | Structured team knowledge store. Eight item types: text notes, API keys, numbers, AI prompts, Claude skills, photos, videos, and documents. Pin, react, reorder, and search. |
@@ -83,7 +83,7 @@ Get Syncbase running locally in under two minutes.
 - Node.js 20+
 - A [Supabase](https://supabase.com) project (free tier works)
 - A [Cloudinary](https://cloudinary.com) account (free tier works)
-- A Google OAuth client ID (optional — only needed for Google sign-in)
+- A Google OAuth client ID (optional, only needed for Google sign-in)
 
 ### 1. Clone and install
 
@@ -131,7 +131,7 @@ Enable **Row Level Security** on all tables and **Realtime** on `posts`, `tasks`
 npm run dev
 ```
 
-Open [http://localhost:5174](http://localhost:5174) — sign up, create a team, and you're in.
+Open [http://localhost:5174](http://localhost:5174). Sign up, create a team, and you are in.
 
 ---
 
@@ -148,7 +148,7 @@ syncbase/
 │   ├── styles/
 │   │   └── theme.css           # CSS custom properties, dark/light tokens
 │   ├── lib/
-│   │   ├── api.ts              # All Supabase API calls (teams, posts, tasks, chat…)
+│   │   ├── api.ts              # All Supabase API calls (teams, posts, tasks, chat...)
 │   │   ├── supabase.ts         # Supabase client initialisation
 │   │   ├── cloudinary.ts       # Image/file upload helpers
 │   │   ├── constants.ts        # Platforms, statuses, priorities, info types
@@ -227,7 +227,7 @@ syncbase/
 
 ```bash
 npm run dev       # Start development server at http://localhost:5174
-npm run build     # Production build → dist/
+npm run build     # Production build to dist/
 npm run preview   # Preview the production build locally
 npm run lint      # Run ESLint
 ```
@@ -236,7 +236,7 @@ npm run lint      # Run ESLint
 
 ## Deployment
 
-Syncbase is a static SPA — deploy the `dist/` folder anywhere that can serve static files.
+Syncbase is a static SPA. Deploy the `dist/` folder anywhere that can serve static files.
 
 ### Vercel (recommended)
 
@@ -288,9 +288,9 @@ server {
 ## Troubleshooting
 
 <details>
-<summary><strong>Blank page after login — "Missing Supabase env vars" in console</strong></summary>
+<summary><strong>Blank page after login - "Missing Supabase env vars" in console</strong></summary>
 
-Your `.env` file is either missing or the variable names are wrong. Double-check that the file is at the project root (same level as `package.json`) and that you restarted the dev server after editing it. Variable names must match exactly — Vite only exposes variables prefixed with `VITE_`.
+Your `.env` file is either missing or the variable names are wrong. Double-check that the file is at the project root (same level as `package.json`) and that you restarted the dev server after editing it. Variable names must match exactly. Vite only exposes variables prefixed with `VITE_`.
 
 </details>
 
@@ -335,16 +335,16 @@ In your Google Cloud Console → OAuth 2.0 Client, add your full origin (e.g. `h
 - [ ] AI writing assistant for post captions
 - [ ] Granular notification preferences per channel
 
-Have an idea? [Open a feature request →](https://github.com/spacesdrive/syncbase/issues/new?template=feature_request.md)
+Have an idea? [Open a feature request](https://github.com/spacesdrive/syncbase/issues/new?template=feature_request.md)
 
 ---
 
 ## Contributing
 
-Contributions are genuinely welcome — bug fixes, new features, better docs, design improvements. Here is how to get started:
+Contributions are genuinely welcome: bug fixes, new features, better docs, design improvements. Here is how to get started:
 
 1. **Fork** the repository and clone your fork
-2. **Create a branch** — `git checkout -b feat/your-feature-name`
+2. **Create a branch**: `git checkout -b feat/your-feature-name`
 3. **Make your changes** and commit with a clear message following [Conventional Commits](https://www.conventionalcommits.org)
 4. **Push** your branch and open a Pull Request against `main`
 
@@ -353,7 +353,7 @@ For larger changes, open an issue first so we can align on approach before you i
 Look for issues labelled [`good first issue`](https://github.com/spacesdrive/syncbase/labels/good%20first%20issue) if you are new to the codebase.
 
 ```bash
-# Fork → clone → install
+# Fork, clone, and install
 git clone https://github.com/YOUR_USERNAME/syncbase.git
 cd syncbase && npm install
 
@@ -373,7 +373,7 @@ npm run lint
 
 Distributed under the **MIT License**. See [`LICENSE`](LICENSE) for the full text.
 
-You are free to use, modify, and distribute Syncbase — including in commercial products. Attribution is appreciated but not required.
+You are free to use, modify, and distribute Syncbase, including in commercial products. Attribution is appreciated but not required.
 
 ---
 
@@ -381,15 +381,15 @@ You are free to use, modify, and distribute Syncbase — including in commercial
 
 Syncbase is built on the shoulders of excellent open-source work:
 
-- [Supabase](https://supabase.com) — backend, auth, and real-time infrastructure
-- [Radix UI](https://www.radix-ui.com) — accessible, unstyled UI primitives
-- [shadcn/ui](https://ui.shadcn.com) — component patterns and composition model
-- [Tailwind CSS](https://tailwindcss.com) — utility-first styling
-- [Framer Motion](https://www.framer.com/motion/) — animation primitives
-- [Aceternity UI](https://ui.aceternity.com) — visual effect components
-- [dnd-kit](https://dndkit.com) — drag-and-drop toolkit
-- [Lucide](https://lucide.dev) — icon set
-- [Cloudinary](https://cloudinary.com) — media management
+- [Supabase](https://supabase.com) - backend, auth, and real-time infrastructure
+- [Radix UI](https://www.radix-ui.com) - accessible, unstyled UI primitives
+- [shadcn/ui](https://ui.shadcn.com) - component patterns and composition model
+- [Tailwind CSS](https://tailwindcss.com) - utility-first styling
+- [Framer Motion](https://www.framer.com/motion/) - animation primitives
+- [Aceternity UI](https://ui.aceternity.com) - visual effect components
+- [dnd-kit](https://dndkit.com) - drag-and-drop toolkit
+- [Lucide](https://lucide.dev) - icon set
+- [Cloudinary](https://cloudinary.com) - media management
 
 ---
 
