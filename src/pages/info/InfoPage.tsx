@@ -22,7 +22,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 import { api } from '../../lib/api'
-import { uploadToCloudinary, uploadFileToCloudinary, getCloudinaryDownloadUrl } from '../../lib/cloudinary'
+import { uploadToCloudinary, uploadFileToCloudinary, downloadFromUrl } from '../../lib/cloudinary'
 import { useTeam } from '../../contexts/TeamContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { useRealtime } from '../../hooks/useRealtime'
@@ -154,7 +154,6 @@ function InfoCardContent({
       case 'document': {
         const { url: docUrl, filename } = parseDocContent(item.content)
         const isPdf = !!docUrl && (docUrl.toLowerCase().includes('.pdf') || filename?.toLowerCase().endsWith('.pdf'))
-        const downloadUrl = getCloudinaryDownloadUrl(docUrl)
         return docUrl ? (
           <div className="mt-2 space-y-2">
             <div className="flex items-center gap-2">
@@ -170,16 +169,14 @@ function InfoCardContent({
                   {filename && filename !== item.title && <p className="truncate text-[11px] text-zinc-400 dark:text-zinc-500">{filename}</p>}
                 </div>
               </a>
-              <a
-                href={downloadUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => downloadFromUrl(docUrl, filename || item.title || 'download')}
                 title="Download file"
                 className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
               >
                 <Download className="w-3.5 h-3.5" />
                 Download
-              </a>
+              </button>
             </div>
             {isPdf && (
               <iframe

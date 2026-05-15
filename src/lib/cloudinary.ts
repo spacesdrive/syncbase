@@ -58,7 +58,19 @@ export function getOptimizedUrl(publicId: string, options: { width?: number; qua
   return `https://res.cloudinary.com/${CLOUD_NAME}/image/upload/w_${width},q_${quality},f_${format}/${publicId}`
 }
 
-export function getCloudinaryDownloadUrl(url: string): string {
-  if (!url || !url.includes('res.cloudinary.com')) return url
-  return url.replace(/\/upload\/(?!fl_attachment)/, '/upload/fl_attachment/')
+export async function downloadFromUrl(url: string, filename: string): Promise<void> {
+  try {
+    const response = await fetch(url)
+    const blob = await response.blob()
+    const objectUrl = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = objectUrl
+    a.download = filename || 'download'
+    document.body.appendChild(a)
+    a.click()
+    document.body.removeChild(a)
+    URL.revokeObjectURL(objectUrl)
+  } catch {
+    window.open(url, '_blank')
+  }
 }
