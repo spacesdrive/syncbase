@@ -398,8 +398,4 @@ Syncbase is built on the shoulders of excellent open-source work:
 
 [![Star on GitHub](https://img.shields.io/github/stars/spacesdrive/syncbase?style=for-the-badge&color=FFD700&label=Star%20on%20GitHub)](https://github.com/spacesdrive/syncbase/stargazers)
 
-<br />
-
-Made with care · [Open an issue](https://github.com/spacesdrive/syncbase/issues) · [Start contributing](https://github.com/spacesdrive/syncbase/blob/main/CONTRIBUTING.md)
-
 </div>
