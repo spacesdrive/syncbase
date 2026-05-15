@@ -161,7 +161,7 @@ function InfoCardContent({
                 href={docUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-1 min-w-0 flex items-center gap-2.5 bg-zinc-50 dark:bg-zinc-800/50 border border-zinc-200 dark:border-zinc-700 rounded-lg px-3 py-2.5 text-sm text-primary hover:bg-primary/10 transition-colors"
+                className="flex-1 min-w-0 flex items-center gap-2.5 bg-muted/50 dark:bg-card border border-border rounded-lg px-3 py-2.5 text-sm text-primary hover:bg-primary/10 transition-colors"
               >
                 <FileText className="w-4 h-4 shrink-0" />
                 <div className="flex-1 min-w-0">
@@ -199,7 +199,7 @@ function InfoCardContent({
                 <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">{providerInfo.label}</span>
               </div>
             )}
-            <div className="flex items-center gap-2 bg-zinc-50 dark:bg-zinc-800/50 rounded-lg px-3 py-2">
+            <div className="flex items-center gap-2 bg-muted/50 dark:bg-card rounded-lg px-3 py-2">
               <code className="flex-1 text-xs font-mono text-zinc-700 dark:text-zinc-300 truncate">
                 {visible ? item.content : '•'.repeat(Math.min(item.content?.length || 8, 32))}
               </code>
@@ -221,14 +221,14 @@ function InfoCardContent({
         return (
           <div className="mt-2 relative">
             <pre className={cn(
-              'text-xs text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap bg-zinc-50 dark:bg-zinc-800/50 rounded-lg p-3 font-mono',
+              'text-xs text-foreground/80 whitespace-pre-wrap bg-muted/50 dark:bg-card rounded-lg p-3 font-mono',
               !expanded && 'line-clamp-6'
             )}>
               {item.content}
             </pre>
             <button
               onClick={copyContent}
-              className="absolute top-2 right-2 p-1 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded text-zinc-400 hover:text-zinc-600"
+              className="absolute top-2 right-2 p-1 bg-background dark:bg-card border border-border rounded text-muted-foreground hover:text-foreground"
             >
               {copied ? <Check className="w-3 h-3 text-emerald-500" /> : <Copy className="w-3 h-3" />}
             </button>
@@ -333,7 +333,7 @@ function InfoCardContent({
         {renderContent()}
 
         {item.note && (
-          <div className="mt-3 rounded-lg bg-zinc-50 dark:bg-zinc-800/40 px-3 py-2">
+          <div className="mt-3 rounded-lg bg-muted/40 dark:bg-card/70 px-3 py-2">
             <p className="text-[11px] font-medium uppercase tracking-wide text-zinc-400 dark:text-zinc-500">Note</p>
             <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap">{item.note}</p>
           </div>
@@ -1006,7 +1006,7 @@ export default function InfoPage() {
           onClick={() => setFilter('')}
           className={cn(
             'px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors shrink-0',
-            filter === '' ? 'bg-primary text-primary-foreground' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+            filter === '' ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
           )}
         >
           All ({items.length})
@@ -1020,7 +1020,7 @@ export default function InfoPage() {
               onClick={() => setFilter(t.id)}
               className={cn(
                 'px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors flex items-center gap-1 shrink-0',
-                filter === t.id ? 'bg-primary text-primary-foreground' : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+                filter === t.id ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               )}
             >
               <InfoTypeIcon name={t.icon} className="w-3 h-3" /> {t.label} ({count})
