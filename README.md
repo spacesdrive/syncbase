@@ -7,7 +7,7 @@
 **The collaborative workspace where your team posts, ships, and stays in sync, all in one place.**
 
 [![GitHub Stars](https://img.shields.io/github/stars/spacesdrive/syncbase?style=flat-square&color=FFD700&label=Stars)](https://github.com/spacesdrive/syncbase/stargazers)
-[![License](https://img.shields.io/github/license/spacesdrive/syncbase?style=flat-square&color=4ade80)](https://github.com/spacesdrive/syncbase/blob/main/LICENSE)
+[![License](https://img.shields.io/github/license/spacesdrive/syncbase?style=flat-square&color=4ade80)]([https://github.com/spacesdrive/syncbase/blob/main/LICENSE](https://github.com/spacesdrive/syncbase/blob/main/LICENSE))
 [![Last Commit](https://img.shields.io/github/last-commit/spacesdrive/syncbase?style=flat-square&color=818cf8)](https://github.com/spacesdrive/syncbase/commits/main)
 [![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=white)](https://react.dev)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.8-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org)
