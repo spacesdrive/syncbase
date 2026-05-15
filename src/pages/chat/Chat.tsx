@@ -80,7 +80,7 @@ function ComposeModal({ members, onClose, onSent }: {
     if (!file) return
     setUploadingFile(true)
     try {
-      const result = await uploadFileToCloudinary(file, 'teamflow/chat')
+      const result = await uploadFileToCloudinary(file, 'syncbase/chat')
       setPendingFile(result)
     } catch (err: any) {
       toast.error(err.message)
@@ -328,7 +328,7 @@ export default function Chat() {
     if (!file) return
     setUploadingFile(true)
     try {
-      const result = await uploadFileToCloudinary(file, 'teamflow/chat')
+      const result = await uploadFileToCloudinary(file, 'syncbase/chat')
       setPendingFile(result)
     } catch (err: any) {
       toast.error(err.message)

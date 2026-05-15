@@ -8,8 +8,8 @@ const supabaseKey = (
 
 if (!supabaseUrl || !supabaseKey) {
   console.error(
-    '[TeamFlow] Missing Supabase env vars.\n' +
-    'Make sure frontend/.env contains:\n' +
+    '[Syncbase] Missing Supabase env vars.\n' +
+    'Make sure .env contains:\n' +
     '  VITE_SUPABASE_URL=https://xxxx.supabase.co\n' +
     '  VITE_SUPABASE_ANON_KEY=eyJ...'
   )

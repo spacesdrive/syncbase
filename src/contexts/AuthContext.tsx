@@ -71,7 +71,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       setProfile(data)
     } catch (err: any) {
-      console.error('[TeamFlow] fetchProfile error:', err.message)
+      console.error('[Syncbase] fetchProfile error:', err.message)
     } finally {
       setLoading(false)
     }

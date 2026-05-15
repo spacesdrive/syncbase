@@ -150,7 +150,7 @@ export function TeamProvider({ children }: { children: ReactNode }) {
         toast.error('Could not switch team — membership not found.')
       }
     } catch (err: any) {
-      console.error('[TeamFlow] switchTeam error:', err.message)
+      console.error('[Syncbase] switchTeam error:', err.message)
       toast.error('Failed to switch team.')
     }
   }

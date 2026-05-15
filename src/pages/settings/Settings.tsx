@@ -101,7 +101,7 @@ function ProfileSection() {
     if (!file) return
     setUploadingPhoto(true)
     try {
-      const { url } = await uploadToCloudinary(file, 'teamflow/avatars')
+      const { url } = await uploadToCloudinary(file, 'syncbase/avatars')
       await updateProfile({ avatar_url: url })
       toast.success('Profile photo updated!')
     } catch (err: any) {
@@ -186,7 +186,7 @@ function AccountSection() {
     if (!file || !isAdmin) return
     setUploadingLogo(true)
     try {
-      const { url } = await uploadToCloudinary(file, 'teamflow/logos')
+      const { url } = await uploadToCloudinary(file, 'syncbase/logos')
       await api.updateTeam(team.id, { logo_url: url })
       updateTeamLocally({ logo_url: url })
       toast.success('Team logo updated!')

@@ -17,10 +17,10 @@ export function BrandLogo({ size = 'md', showWordmark = false, className = '' }:
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
-      <img src="/logo.png" alt="TeamFlow" className={cn(imageSize, 'object-cover shadow-lg shadow-black/10')} />
+      <img src="/logo.png" alt="Syncbase" className={cn(imageSize, 'object-cover shadow-lg shadow-black/10')} />
       {showWordmark ? (
         <div className="min-w-0">
-          <p className="text-sm font-semibold text-foreground leading-tight">TeamFlow</p>
+          <p className="text-sm font-semibold text-foreground leading-tight">Syncbase</p>
           <p className="text-[11px] text-muted-foreground">Workspace</p>
         </div>
       ) : null}

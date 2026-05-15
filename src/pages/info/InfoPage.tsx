@@ -509,7 +509,7 @@ function CreateInfoModal({
     if (!file) return
     setUploading(true)
     try {
-      const { url } = await uploadToCloudinary(file, 'teamflow/info')
+      const { url } = await uploadToCloudinary(file, 'syncbase/info')
       setContent(url)
     } catch (err: any) {
       toast.error(err.message)
@@ -523,7 +523,7 @@ function CreateInfoModal({
     if (!file) return
     setUploading(true)
     try {
-      const result = await uploadFileToCloudinary(file, 'teamflow/info')
+      const result = await uploadFileToCloudinary(file, 'syncbase/info')
       setContent(JSON.stringify({ url: result.url, filename: result.name, size: result.size }))
     } catch (err: any) {
       toast.error(err.message)
@@ -752,7 +752,7 @@ function EditInfoModal({
     if (!file) return
     setUploading(true)
     try {
-      const { url } = await uploadToCloudinary(file, 'teamflow/info')
+      const { url } = await uploadToCloudinary(file, 'syncbase/info')
       setContent(url)
     } catch (err: any) {
       toast.error(err.message)
@@ -766,7 +766,7 @@ function EditInfoModal({
     if (!file) return
     setUploading(true)
     try {
-      const result = await uploadFileToCloudinary(file, 'teamflow/info')
+      const result = await uploadFileToCloudinary(file, 'syncbase/info')
       setContent(JSON.stringify({ url: result.url, filename: result.name, size: result.size }))
     } catch (err: any) {
       toast.error(err.message)

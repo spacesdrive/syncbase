@@ -1,7 +1,7 @@
 const CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME as string
 const UPLOAD_PRESET = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET as string
 
-export async function uploadToCloudinary(file: File, folder = 'teamflow/posts') {
+export async function uploadToCloudinary(file: File, folder = 'syncbase/posts') {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('upload_preset', UPLOAD_PRESET)
@@ -26,7 +26,7 @@ export async function uploadToCloudinary(file: File, folder = 'teamflow/posts') 
   }
 }
 
-export async function uploadFileToCloudinary(file: File, folder = 'teamflow/chat') {
+export async function uploadFileToCloudinary(file: File, folder = 'syncbase/chat') {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('upload_preset', UPLOAD_PRESET)

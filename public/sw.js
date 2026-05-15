@@ -1,4 +1,4 @@
-const CACHE = 'teamflow-shell-v5'
+const CACHE = 'syncbase-shell-v5'
 const PRECACHE = [
   '/manifest.json',
   '/favicon.ico',

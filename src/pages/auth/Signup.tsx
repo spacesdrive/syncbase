@@ -71,7 +71,7 @@ export default function Signup() {
         <div className="text-center mb-8">
           <BrandLogo size="lg" className="justify-center mb-5" />
           <h1 className="text-2xl font-bold text-foreground tracking-tight">Create your account</h1>
-          <p className="text-muted-foreground mt-1.5 text-sm">Get started with TeamFlow today</p>
+          <p className="text-muted-foreground mt-1.5 text-sm">Get started with Syncbase today</p>
         </div>
 
         <div className="bg-card/90 backdrop-blur-xl rounded-2xl border border-border/60 shadow-xl shadow-black/8 p-7 space-y-4">

@@ -35,7 +35,7 @@ export function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation()
   const title = TITLES[pathname]
     ?? Object.entries(TITLES).find(([k]) => pathname.startsWith(k))?.[1]
-    ?? 'TeamFlow'
+    ?? 'Syncbase'
 
   return (
     <SidebarProvider defaultOpen={getDefaultOpen()}>

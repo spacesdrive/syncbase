@@ -1,7 +1,7 @@
 {
-  "name": "TeamFlow",
-  "short_name": "TeamFlow",
-  "description": "TeamFlow is a collaborative workspace for posts, tasks, projects, chat, and shared team knowledge.",
+  "name": "Syncbase",
+  "short_name": "Syncbase",
+  "description": "Syncbase is a collaborative workspace for posts, tasks, projects, chat, and shared team knowledge.",
   "id": "/",
   "scope": "/",
   "start_url": "/posts",
