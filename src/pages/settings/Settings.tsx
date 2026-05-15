@@ -301,7 +301,7 @@ function AccountSection() {
           <div className='space-y-2'>
             <Label>Invite code</Label>
             <div className='flex items-center gap-2'>
-              <div className='flex-1 bg-muted border border-border rounded-lg px-4 py-3 font-mono text-xl font-bold tracking-[0.3em] text-center text-primary select-all'>
+              <div className='flex-1 bg-card border border-border rounded-lg px-4 py-3 font-mono text-xl font-bold tracking-[0.3em] text-center text-foreground select-all'>
                 {team.invite_code}
               </div>
               <Button type='button' variant='outline' onClick={copyInviteCode}>

@@ -14,6 +14,7 @@ function TabsList({ className, ...props }: React.ComponentProps<typeof TabsPrimi
       data-slot='tabs-list'
       className={cn(
         'inline-flex h-9 w-fit items-center justify-center rounded-lg bg-muted p-1 text-muted-foreground',
+        'dark:bg-background/60 dark:border dark:border-border/40',
         className
       )}
       {...props}
@@ -31,6 +32,7 @@ function TabsTrigger({ className, ...props }: React.ComponentProps<typeof TabsPr
         'focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50',
         'disabled:pointer-events-none disabled:opacity-50',
         'data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
+        'dark:data-[state=active]:bg-muted dark:data-[state=active]:text-foreground dark:data-[state=active]:shadow-none dark:data-[state=active]:ring-1 dark:data-[state=active]:ring-white/10',
         className
       )}
       {...props}
