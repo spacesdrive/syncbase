@@ -144,12 +144,12 @@ function InfoCardContent({
       case 'photo':
         return item.content ? (
           <img src={item.content} alt={item.title} className="w-full h-40 object-cover rounded-lg mt-2" />
-        ) : <p className="text-xs text-zinc-400 mt-2">No image</p>
+        ) : <p className="text-xs text-muted-foreground mt-2">No image</p>
 
       case 'video':
         return item.content ? (
           <video src={item.content} controls className="w-full rounded-lg mt-2 max-h-48 bg-black" />
-        ) : <p className="text-xs text-zinc-400 mt-2">No video</p>
+        ) : <p className="text-xs text-muted-foreground mt-2">No video</p>
 
       case 'document': {
         const { url: docUrl, filename } = parseDocContent(item.content)
@@ -166,13 +166,13 @@ function InfoCardContent({
                 <FileText className="w-4 h-4 shrink-0" />
                 <div className="flex-1 min-w-0">
                   <p className="truncate font-medium">{item.title}</p>
-                  {filename && filename !== item.title && <p className="truncate text-[11px] text-zinc-400 dark:text-zinc-500">{filename}</p>}
+                  {filename && filename !== item.title && <p className="truncate text-[11px] text-muted-foreground">{filename}</p>}
                 </div>
               </a>
               <button
                 onClick={() => downloadFromUrl(docUrl, filename || item.title || 'download')}
                 title="Download file"
-                className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
+                className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
               >
                 <Download className="w-3.5 h-3.5" />
                 Download
@@ -182,12 +182,12 @@ function InfoCardContent({
               <iframe
                 src={docUrl}
                 title={filename || item.title}
-                className="w-full rounded-lg border border-zinc-200 dark:border-zinc-700"
+                className="w-full rounded-lg border border-border"
                 style={{ height: '420px' }}
               />
             )}
           </div>
-        ) : <p className="text-xs text-zinc-400 mt-2">No file uploaded</p>
+        ) : <p className="text-xs text-muted-foreground mt-2">No file uploaded</p>
       }
 
       case 'api_key':
@@ -196,17 +196,17 @@ function InfoCardContent({
             {providerInfo && (
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: providerInfo.color }} />
-                <span className="text-xs font-medium text-zinc-600 dark:text-zinc-300">{providerInfo.label}</span>
+                <span className="text-xs font-medium text-foreground/80">{providerInfo.label}</span>
               </div>
             )}
             <div className="flex items-center gap-2 bg-muted/50 dark:bg-card rounded-lg px-3 py-2">
-              <code className="flex-1 text-xs font-mono text-zinc-700 dark:text-zinc-300 truncate">
+              <code className="flex-1 text-xs font-mono text-foreground/80 truncate">
                 {visible ? item.content : '•'.repeat(Math.min(item.content?.length || 8, 32))}
               </code>
-              <button onClick={() => setVisible((v) => !v)} className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 shrink-0">
+              <button onClick={() => setVisible((v) => !v)} className="text-muted-foreground hover:text-foreground shrink-0">
                 {visible ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
               </button>
-              <button onClick={copyContent} className="text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-200 shrink-0">
+              <button onClick={copyContent} className="text-muted-foreground hover:text-foreground shrink-0">
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
               </button>
             </div>
@@ -214,7 +214,7 @@ function InfoCardContent({
         )
 
       case 'number':
-        return <p className="mt-2 text-2xl font-bold text-zinc-900 dark:text-white">{item.content}</p>
+        return <p className="mt-2 text-2xl font-bold text-foreground">{item.content}</p>
 
       case 'prompt':
       case 'claude_skill':
@@ -246,7 +246,7 @@ function InfoCardContent({
       default:
         return (
           <div className="mt-2">
-            <p className={cn('text-sm text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap', !expanded && 'line-clamp-4')}>
+            <p className={cn('text-sm text-foreground/80 whitespace-pre-wrap', !expanded && 'line-clamp-4')}>
               {item.content}
             </p>
             {isExpandable && (
@@ -289,13 +289,13 @@ function InfoCardContent({
       <div className={cn('card p-4 hover:shadow-md transition-shadow relative', item.pinned && 'ring-1 ring-primary/20')}>
         <div className="flex items-start justify-between gap-2">
           <div className="flex items-center gap-2 flex-1 min-w-0">
-            {typeInfo && <InfoTypeIcon name={typeInfo.icon} className="w-4 h-4 shrink-0 text-zinc-500 dark:text-zinc-400" />}
+            {typeInfo && <InfoTypeIcon name={typeInfo.icon} className="w-4 h-4 shrink-0 text-muted-foreground" />}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5 min-w-0">
-                <h3 className="text-sm font-semibold text-zinc-900 dark:text-white truncate">{item.title}</h3>
+                <h3 className="text-sm font-semibold text-foreground truncate">{item.title}</h3>
                 {item.pinned && <Pin className="w-3 h-3 shrink-0 text-primary/60 fill-current" />}
               </div>
-              <p className="text-xs text-zinc-400">{typeInfo?.label}</p>
+              <p className="text-xs text-muted-foreground">{typeInfo?.label}</p>
             </div>
           </div>
           <div className="flex items-center gap-1 shrink-0">
@@ -306,7 +306,7 @@ function InfoCardContent({
                 'p-1 rounded transition-colors',
                 item.pinned
                   ? 'text-primary hover:text-primary/70'
-                  : 'text-zinc-300 dark:text-zinc-600 hover:text-primary'
+                  : 'text-muted-foreground/40 dark:text-muted-foreground/30 hover:text-primary'
               )}
               title={item.pinned ? 'Unpin' : 'Pin to top'}
             >
@@ -315,7 +315,7 @@ function InfoCardContent({
             {onEdit && (
               <button
                 onClick={() => onEdit(item)}
-                className="p-1 text-zinc-300 dark:text-zinc-600 hover:text-primary transition-colors"
+                className="p-1 text-muted-foreground/40 dark:text-muted-foreground/30 hover:text-primary transition-colors"
                 title="Edit"
               >
                 <Pencil className="w-3.5 h-3.5" />
@@ -323,7 +323,7 @@ function InfoCardContent({
             )}
             <button
               onClick={handleDelete}
-              className="p-1 text-zinc-300 dark:text-zinc-600 hover:text-red-500 transition-colors"
+              className="p-1 text-muted-foreground/40 hover:text-red-500 transition-colors"
             >
               <Trash2 className="w-3.5 h-3.5" />
             </button>
@@ -334,8 +334,8 @@ function InfoCardContent({
 
         {item.note && (
           <div className="mt-3 rounded-lg bg-muted/40 dark:bg-card/70 px-3 py-2">
-            <p className="text-[11px] font-medium uppercase tracking-wide text-zinc-400 dark:text-zinc-500">Note</p>
-            <p className="mt-1 text-xs text-zinc-600 dark:text-zinc-300 whitespace-pre-wrap">{item.note}</p>
+            <p className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">Note</p>
+            <p className="mt-1 text-xs text-foreground/80 whitespace-pre-wrap">{item.note}</p>
           </div>
         )}
 
@@ -349,12 +349,12 @@ function InfoCardContent({
         {item.creator && (
           <div className="mt-3 flex items-center gap-1.5">
             <Avatar name={item.creator?.name} src={item.creator?.avatar_url} size="xs" />
-            <span className="text-xs text-zinc-400">{item.creator?.name}</span>
+            <span className="text-xs text-muted-foreground">{item.creator?.name}</span>
           </div>
         )}
 
         {/* Reactions */}
-        <div className="mt-3 flex flex-wrap items-center gap-1 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+        <div className="mt-3 flex flex-wrap items-center gap-1 pt-2 border-t border-border/60">
           {REACTION_EMOJIS.map((emoji) => {
             const r = reactions[emoji]
             return (
@@ -365,7 +365,7 @@ function InfoCardContent({
                   'flex items-center gap-0.5 px-1.5 py-0.5 rounded-full border transition-all',
                   r?.isOwn
                     ? 'bg-primary/10 border-primary/30 text-primary'
-                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-600 hover:text-zinc-600 dark:hover:text-zinc-300'
+                    : 'border-border text-muted-foreground hover:border-border hover:text-foreground/80'
                 )}
               >
                 <span className="text-sm leading-none">{emoji}</span>
@@ -409,7 +409,7 @@ function SortableInfoCard({
           <button
             {...attributes}
             {...listeners}
-            className="p-1 text-zinc-300 dark:text-zinc-600 hover:text-zinc-500 dark:hover:text-zinc-300 cursor-grab active:cursor-grabbing transition-colors touch-none"
+            className="p-1 text-muted-foreground/40 hover:text-muted-foreground cursor-grab active:cursor-grabbing transition-colors touch-none"
             title="Drag to reorder"
           >
             <GripVertical className="w-3.5 h-3.5" />
@@ -445,7 +445,7 @@ function UploadZone({
           'border-2 border-dashed rounded-xl p-4 text-center transition-colors cursor-pointer',
           uploading
             ? 'border-primary/30 bg-primary/5 cursor-not-allowed'
-            : 'border-zinc-200 dark:border-zinc-700 hover:border-primary/40 hover:bg-primary/5'
+            : 'border-border hover:border-primary/40 hover:bg-primary/5'
         )}
       >
         {uploading ? (
@@ -455,8 +455,8 @@ function UploadZone({
           </div>
         ) : (
           <div className="flex flex-col items-center gap-1.5">
-            <Upload className="w-5 h-5 text-zinc-400" />
-            <p className="text-xs text-zinc-500 dark:text-zinc-400">{label}</p>
+            <Upload className="w-5 h-5 text-muted-foreground" />
+            <p className="text-xs text-muted-foreground">{label}</p>
           </div>
         )}
       </div>
@@ -597,7 +597,7 @@ function CreateInfoModal({
         return (
           <>
             <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Provider</label>
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Provider</label>
               <select value={provider} onChange={(e) => setProvider(e.target.value)} className="input">
                 <option value="">Select provider…</option>
                 {API_PROVIDERS.map((p) => (
@@ -606,7 +606,7 @@ function CreateInfoModal({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">API Key</label>
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">API Key</label>
               <input type="password" value={content} onChange={(e) => setContent(e.target.value)} placeholder="sk-…" className="input font-mono" />
             </div>
           </>
@@ -615,7 +615,7 @@ function CreateInfoModal({
       case 'number':
         return (
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Value</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Value</label>
             <input type="number" value={content} onChange={(e) => setContent(e.target.value)} placeholder="0" className="input" />
           </div>
         )
@@ -624,7 +624,7 @@ function CreateInfoModal({
       case 'claude_skill':
         return (
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
               {type === 'claude_skill' ? 'Instructions / Skill' : 'Prompt'}
             </label>
             <textarea
@@ -640,7 +640,7 @@ function CreateInfoModal({
       default:
         return (
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Content</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Content</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -657,7 +657,7 @@ function CreateInfoModal({
     <Modal open={open} onClose={() => { reset(); onClose() }} title="New Info Box">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-2 uppercase tracking-wide">Type</label>
+          <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">Type</label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {INFO_TYPES.map((t) => (
               <button
@@ -668,7 +668,7 @@ function CreateInfoModal({
                   'flex flex-col items-center gap-1 p-2 rounded-xl border text-center transition-all',
                   type === t.id
                     ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-400 hover:border-zinc-300 dark:hover:border-zinc-500'
+                    : 'border-border text-muted-foreground hover:border-border'
                 )}
               >
                 <InfoTypeIcon name={t.icon} className="w-4 h-4" />
@@ -679,20 +679,20 @@ function CreateInfoModal({
         </div>
 
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Title *</label>
+          <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Title *</label>
           <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Groq API Key" className="input" required />
         </div>
 
         {renderContentField()}
 
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Note</label>
+          <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Note</label>
           <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional note…" rows={2} className="input resize-none" />
         </div>
 
         {tasks.length > 0 && (
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Link to task (optional)</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Link to task (optional)</label>
             <select value={taskId} onChange={(e) => setTaskId(e.target.value)} className="input">
               <option value="">No task</option>
               {tasks.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
@@ -835,7 +835,7 @@ function EditInfoModal({
         return (
           <>
             <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Provider</label>
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Provider</label>
               <select value={provider} onChange={(e) => setProvider(e.target.value)} className="input">
                 <option value="">Select provider…</option>
                 {API_PROVIDERS.map((p) => (
@@ -844,7 +844,7 @@ function EditInfoModal({
               </select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">API Key</label>
+              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">API Key</label>
               <input type="password" value={content} onChange={(e) => setContent(e.target.value)} placeholder="sk-…" className="input font-mono" />
             </div>
           </>
@@ -852,7 +852,7 @@ function EditInfoModal({
       case 'number':
         return (
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Value</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Value</label>
             <input type="number" value={content} onChange={(e) => setContent(e.target.value)} placeholder="0" className="input" />
           </div>
         )
@@ -860,7 +860,7 @@ function EditInfoModal({
       case 'claude_skill':
         return (
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
               {type === 'claude_skill' ? 'Instructions / Skill' : 'Prompt'}
             </label>
             <textarea
@@ -874,7 +874,7 @@ function EditInfoModal({
       default:
         return (
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Content</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Content</label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
@@ -890,20 +890,20 @@ function EditInfoModal({
     <Modal open={open} onClose={onClose} title="Edit Info Box">
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Title *</label>
+          <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Title *</label>
           <input value={title} onChange={(e) => setTitle(e.target.value)} className="input" required />
         </div>
 
         {renderContentField()}
 
         <div>
-          <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Note</label>
+          <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Note</label>
           <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} className="input resize-none" />
         </div>
 
         {tasks.length > 0 && (
           <div>
-            <label className="block text-xs font-medium text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wide">Link to task (optional)</label>
+            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Link to task (optional)</label>
             <select value={taskId} onChange={(e) => setTaskId(e.target.value)} className="input">
               <option value="">No task</option>
               {tasks.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}

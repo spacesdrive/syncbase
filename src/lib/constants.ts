@@ -9,14 +9,14 @@ export const PLATFORMS = [
 ]
 
 export const POST_STATUSES = [
-  { id: 'draft', label: 'Draft', color: 'bg-zinc-100 dark:bg-zinc-700/60 text-zinc-600 dark:text-zinc-300' },
+  { id: 'draft', label: 'Draft', color: 'bg-muted text-muted-foreground' },
   { id: 'pending_review', label: 'Pending Review', color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' },
   { id: 'approved', label: 'Approved', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' },
   { id: 'posted', label: 'Posted', color: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' },
 ]
 
 export const TASK_STATUSES = [
-  { id: 'todo', label: 'To Do', color: 'bg-zinc-100 dark:bg-zinc-700/60 text-zinc-600 dark:text-zinc-300' },
+  { id: 'todo', label: 'To Do', color: 'bg-muted text-muted-foreground' },
   { id: 'in_progress', label: 'In Progress', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' },
   { id: 'in_review', label: 'In Review', color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' },
   { id: 'done', label: 'Done', color: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' },
@@ -31,7 +31,7 @@ export const TASK_PRIORITIES = [
 ]
 
 export const PROJECT_STATUSES = [
-  { id: 'planning', label: 'Planning', color: 'bg-zinc-100 dark:bg-zinc-700/60 text-zinc-600 dark:text-zinc-300' },
+  { id: 'planning', label: 'Planning', color: 'bg-muted text-muted-foreground' },
   { id: 'active', label: 'Active', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400' },
   { id: 'on_hold', label: 'On Hold', color: 'bg-yellow-100 dark:bg-yellow-900/30 text-yellow-700 dark:text-yellow-400' },
   { id: 'completed', label: 'Completed', color: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400' },

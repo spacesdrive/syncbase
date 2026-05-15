@@ -12,7 +12,7 @@ interface DockItem {
 
 export function FloatingDock({ items, className }: { items: DockItem[]; className?: string }) {
   return (
-    <div className={cn('flex items-end gap-2 rounded-2xl bg-white/80 dark:bg-zinc-900/80 backdrop-blur-md border border-zinc-200 dark:border-zinc-700 px-4 py-3 shadow-xl', className)}>
+    <div className={cn('flex items-end gap-2 rounded-2xl bg-white/80 dark:bg-card/80 backdrop-blur-md border border-border px-4 py-3 shadow-xl', className)}>
       {items.map((item) => (
         <IconContainer key={item.title} {...item} />
       ))}
@@ -45,7 +45,7 @@ function IconContainer({ title, icon, href, onClick, active }: DockItem) {
             initial={{ opacity: 0, y: 10, x: '-50%' }}
             animate={{ opacity: 1, y: 0, x: '-50%' }}
             exit={{ opacity: 0, y: 2, x: '-50%' }}
-            className="absolute -top-8 left-1/2 whitespace-pre rounded-md border border-zinc-200 bg-white dark:bg-zinc-800 dark:border-zinc-700 px-2 py-0.5 text-xs text-zinc-700 dark:text-white"
+            className="absolute -top-8 left-1/2 whitespace-pre rounded-md border border-border bg-popover text-foreground px-2 py-0.5 text-xs"
           >
             {title}
           </motion.div>
@@ -60,7 +60,7 @@ function IconContainer({ title, icon, href, onClick, active }: DockItem) {
           'relative flex items-center justify-center rounded-full',
           active
             ? 'bg-primary/15 text-primary'
-            : 'bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 hover:bg-zinc-200 dark:hover:bg-zinc-700'
+            : 'bg-muted text-muted-foreground hover:bg-accent hover:text-accent-foreground'
         )}
       >
         {icon}

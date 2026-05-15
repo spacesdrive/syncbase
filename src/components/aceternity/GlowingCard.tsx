@@ -27,10 +27,10 @@ export function GlowingCard({
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={cn(
-        'relative overflow-hidden rounded-xl bg-white dark:bg-zinc-900 transition-all duration-200',
+        'relative overflow-hidden rounded-xl bg-white dark:bg-card transition-all duration-200',
         isHovered
-          ? 'border border-zinc-200 dark:border-zinc-700 shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)]'
-          : 'border border-zinc-100 dark:border-zinc-800/80',
+          ? 'border border-border shadow-[0_4px_16px_rgba(0,0,0,0.06)] dark:shadow-[0_4px_20px_rgba(0,0,0,0.35)]'
+          : 'border border-border/60',
         className
       )}
     >

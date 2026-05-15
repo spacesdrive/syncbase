@@ -310,7 +310,7 @@ function NavGroupItem({ item, href, onClose }: { item: NavItem; href: string; on
                 <SidebarMenuSubItem key={sub.to}>
                   <SidebarMenuSubButton
                     asChild
-                    isActive={href === sub.to || href.startsWith(sub.to + '/')}
+                    isActive={href === sub.to || (sub.to !== '/settings' && href.startsWith(sub.to + '/'))}
                   >
                     <NavLink to={sub.to} onClick={handleClick}>
                       <span>{sub.label}</span>

@@ -223,10 +223,10 @@ select option {
 }
 
 /* ── Light mode: ensure muted sections have visible bg ─────────── */
-:root .bg-muted\/40 { background-color: oklch(0.96 0.006 247.9 / 0.6); }
+:root:not(.dark) .bg-muted\/40 { background-color: oklch(0.96 0.006 247.9 / 0.6); }
 
 /* ── Light mode: chat message bubbles ──────────────────────────── */
-:root .bg-muted { background-color: oklch(0.93 0.01 255 / 1); }
+:root:not(.dark) .bg-muted { background-color: oklch(0.93 0.01 255 / 1); }
 
 /* ── Collapsible animations ─────────────────────────────────────── */
 .CollapsibleContent { overflow: hidden; }
