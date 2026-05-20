@@ -305,117 +305,110 @@ export function TaskCard({
         )}
         onClick={() => setExpanded((v) => !v)}
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        {/* Title row */}
+        <div className="flex items-start gap-2">
+          <span className={`mt-[5px] w-2 h-2 rounded-full shrink-0 ${priorityInfo?.dot || 'bg-muted-foreground'}`} />
           <div className="flex-1 min-w-0">
-            <div className="flex items-start gap-2 mb-1.5">
-              <span className={`mt-[5px] w-2 h-2 rounded-full shrink-0 ${priorityInfo?.dot || 'bg-muted-foreground'}`} />
-              <div className="min-w-0">
-                <p className={`text-sm font-semibold text-foreground leading-snug ${expanded ? '' : 'line-clamp-1'}`}>{task.title}</p>
-                {!expanded && task.description && (
-                  <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{task.description}</p>
-                )}
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2 flex-wrap pl-4">
-              <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', statusInfo?.color || 'bg-muted text-muted-foreground')}>{statusInfo?.label}</span>
-              <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', priorityInfo?.color || 'bg-muted text-muted-foreground')}>{priorityInfo?.label}</span>
-              {task.due_date && (
-                <span className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive font-semibold' : 'text-muted-foreground'}`}>
-                  <Calendar className="w-3 h-3" />
-                  {format(parseISO(task.due_date), 'MMM d, yyyy')}
-                  {dueDaysLabel && <span className="opacity-75">· {dueDaysLabel}</span>}
-                </span>
-              )}
-              {isMultiAssigned && (
-                <span className="text-xs text-muted-foreground">{taskAssignments.length} assignees</span>
-              )}
-            </div>
-
-            {!expanded && latestCouldntDoComment && (
-              <p className="mt-1.5 pl-4 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 line-clamp-1">
-                <XCircle className="w-3 h-3 shrink-0" />
-                {extractBlockedText(latestCouldntDoComment.content)}
-              </p>
+            <p className={`text-sm font-semibold text-foreground leading-snug ${expanded ? '' : 'line-clamp-1'}`}>{task.title}</p>
+            {!expanded && task.description && (
+              <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{task.description}</p>
             )}
           </div>
+          <button
+            onClick={(e) => { e.stopPropagation(); setExpanded((v) => !v) }}
+            className="p-0.5 rounded hover:bg-muted transition-colors shrink-0"
+            title={expanded ? 'Collapse' : 'Expand'}
+          >
+            <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
+          </button>
+        </div>
 
-          <div className="flex w-full flex-col gap-2 sm:w-auto sm:min-w-[220px] sm:items-end" onClick={(e) => e.stopPropagation()}>
-            <div className="flex min-w-0 items-start justify-between gap-3 sm:w-full sm:justify-end">
-              <div className="min-w-0 text-left sm:text-right">
-                {task.creator && (
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground sm:justify-end">
-                    <User className="w-3 h-3 shrink-0" />
-                    <span className="truncate">by {task.creator.name}</span>
-                  </div>
-                )}
-                {isMultiAssigned ? (
-                  <div className="mt-1 flex items-center gap-2 sm:justify-end">
-                    <AssigneeStack assignments={taskAssignments} />
-                    <span className="text-xs text-muted-foreground">{taskAssignments.length}</span>
-                  </div>
-                ) : task.profiles ? (
-                  <div className="mt-1 flex items-center gap-1.5 text-xs text-muted-foreground sm:justify-end">
-                    <span className="truncate">{task.profiles.name}</span>
-                    <Avatar name={task.profiles.name} src={task.profiles.avatar_url} size="xs" />
-                  </div>
-                ) : null}
+        {/* Meta row: badges + assignees */}
+        <div className="flex items-center gap-2 flex-wrap pl-4">
+          <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', statusInfo?.color || 'bg-muted text-muted-foreground')}>{statusInfo?.label}</span>
+          <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', priorityInfo?.color || 'bg-muted text-muted-foreground')}>{priorityInfo?.label}</span>
+          {task.due_date && (
+            <span className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive font-semibold' : 'text-muted-foreground'}`}>
+              <Calendar className="w-3 h-3" />
+              {format(parseISO(task.due_date), 'MMM d, yyyy')}
+              {dueDaysLabel && <span className="opacity-75">· {dueDaysLabel}</span>}
+            </span>
+          )}
+          <div className="ml-auto flex items-center gap-2 shrink-0">
+            {task.creator && (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <User className="w-3 h-3 shrink-0" />
+                <span className="truncate max-w-[80px]">{task.creator.name}</span>
               </div>
-              <button
-                onClick={(e) => { e.stopPropagation(); setExpanded((v) => !v) }}
-                className="p-0.5 rounded hover:bg-muted transition-colors shrink-0"
-                title={expanded ? 'Collapse' : 'Expand'}
-              >
-                <ChevronDown className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${expanded ? 'rotate-180' : ''}`} />
-              </button>
-            </div>
+            )}
+            {isMultiAssigned ? (
+              <div className="flex items-center gap-1.5">
+                <AssigneeStack assignments={taskAssignments} />
+                <span className="text-xs text-muted-foreground">{taskAssignments.length}</span>
+              </div>
+            ) : task.profiles ? (
+              <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                <span className="truncate max-w-[72px]">{task.profiles.name}</span>
+                <Avatar name={task.profiles.name} src={task.profiles.avatar_url} size="xs" />
+              </div>
+            ) : null}
+          </div>
+        </div>
 
-            <div className="flex flex-wrap items-center justify-end gap-1.5 sm:max-w-[280px]">
-              {reorderEnabled && dragHandleProps && (
-                <button
-                  type="button"
-                  {...dragHandleProps}
-                  onClick={(e) => e.stopPropagation()}
-                  className="order-4 cursor-grab touch-none p-1 text-muted-foreground/40 transition-colors active:cursor-grabbing hover:text-muted-foreground sm:order-none"
-                  title="Drag to reorder"
-                >
-                  <GripVertical className="w-3.5 h-3.5" />
-                </button>
-              )}
-              <button
-                onClick={openChat}
-                className="inline-flex min-h-[38px] items-center gap-1 rounded-lg border border-border px-2.5 py-1.5 text-[11px] font-medium text-muted-foreground transition-all duration-150 hover:border-primary/40 hover:text-primary"
-                title="Team chat"
-              >
-                <MessageSquare className="w-3 h-3" />
-                <span>{comments.length}</span>
-              </button>
-              {canChangeStatus && (
-                <select
-                  value={selectedStatusValue}
-                  onChange={(e) => handleStatusChange(e.target.value)}
-                  className="filter-select min-h-[38px] min-w-[132px] flex-1 sm:flex-initial"
-                >
-                  {visibleStatusOptions.map((o: any) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                  ))}
-                </select>
-              )}
-              <button
-                onClick={() => setShowEditModal(true)}
-                className="p-2 text-muted-foreground/40 transition-colors hover:text-primary"
-                title="Edit ticket"
-              >
-                <Pencil className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={handleDelete}
-                className="p-2 text-muted-foreground/40 transition-colors hover:text-destructive"
-                title="Delete ticket"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
-            </div>
+        {!expanded && latestCouldntDoComment && (
+          <p className="pl-4 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 line-clamp-1">
+            <XCircle className="w-3 h-3 shrink-0" />
+            {extractBlockedText(latestCouldntDoComment.content)}
+          </p>
+        )}
+
+        {/* Action row */}
+        <div className="flex items-center gap-1.5 flex-wrap pl-4" onClick={(e) => e.stopPropagation()}>
+          {reorderEnabled && dragHandleProps && (
+            <button
+              type="button"
+              {...dragHandleProps}
+              onClick={(e) => e.stopPropagation()}
+              className="cursor-grab touch-none p-1 text-muted-foreground/40 transition-colors active:cursor-grabbing hover:text-muted-foreground"
+              title="Drag to reorder"
+            >
+              <GripVertical className="w-3.5 h-3.5" />
+            </button>
+          )}
+          <button
+            onClick={openChat}
+            className="inline-flex h-8 items-center gap-1 rounded-lg border border-border px-2.5 text-[11px] font-medium text-muted-foreground transition-all duration-150 hover:border-primary/40 hover:text-primary"
+            title="Team chat"
+          >
+            <MessageSquare className="w-3 h-3" />
+            <span>{comments.length}</span>
+          </button>
+          {canChangeStatus && (
+            <select
+              value={selectedStatusValue}
+              onChange={(e) => handleStatusChange(e.target.value)}
+              className="filter-select h-8 min-w-[120px] flex-1 sm:flex-initial"
+            >
+              {visibleStatusOptions.map((o: any) => (
+                <option key={o.value} value={o.value}>{o.label}</option>
+              ))}
+            </select>
+          )}
+          <div className="ml-auto flex items-center gap-0.5">
+            <button
+              onClick={() => setShowEditModal(true)}
+              className="p-2 text-muted-foreground/40 transition-colors hover:text-primary"
+              title="Edit ticket"
+            >
+              <Pencil className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={handleDelete}
+              className="p-2 text-muted-foreground/40 transition-colors hover:text-destructive"
+              title="Delete ticket"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+            </button>
           </div>
         </div>
 

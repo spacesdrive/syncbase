@@ -26,13 +26,25 @@ export async function uploadToCloudinary(file: File, folder = 'syncbase/posts') 
   }
 }
 
+function getResourceEndpoint(file: File): 'image' | 'video' | 'raw' {
+  const mime = file.type.toLowerCase()
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? ''
+  if (mime.startsWith('video/')) return 'video'
+  // PDFs upload cleanly as images — Cloudinary has native PDF support
+  if (mime.startsWith('image/') || mime === 'application/pdf' || ext === 'pdf') return 'image'
+  // Everything else (pptx, docx, xlsx, zip, etc.) must go through /raw/upload
+  return 'raw'
+}
+
 export async function uploadFileToCloudinary(file: File, folder = 'syncbase/chat') {
+  const resourceType = getResourceEndpoint(file)
+  const fileExt = file.name.split('.').pop()?.toLowerCase() ?? ''
   const formData = new FormData()
   formData.append('file', file)
   formData.append('upload_preset', UPLOAD_PRESET)
   formData.append('folder', folder)
 
-  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, {
+  const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/${resourceType}/upload`, {
     method: 'POST',
     body: formData,
   })
@@ -49,7 +61,7 @@ export async function uploadFileToCloudinary(file: File, folder = 'syncbase/chat
     name: file.name,
     type: data.resource_type as string,
     size: file.size,
-    format: data.format as string,
+    format: (data.format as string) ?? fileExt,
   }
 }
 
@@ -61,6 +73,7 @@ export function getOptimizedUrl(publicId: string, options: { width?: number; qua
 export async function downloadFromUrl(url: string, filename: string): Promise<void> {
   try {
     const response = await fetch(url)
+    if (!response.ok) throw new Error(`HTTP ${response.status}`)
     const blob = await response.blob()
     const objectUrl = URL.createObjectURL(blob)
     const a = document.createElement('a')
@@ -71,6 +84,7 @@ export async function downloadFromUrl(url: string, filename: string): Promise<vo
     document.body.removeChild(a)
     URL.revokeObjectURL(objectUrl)
   } catch {
+    // Fallback: open in new tab (browser will prompt to download or display)
     window.open(url, '_blank')
   }
 }

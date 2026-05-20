@@ -17,7 +17,7 @@ import {
 import { CSS } from '@dnd-kit/utilities'
 import {
   Plus, Eye, EyeOff, Copy, Check, Trash2, Link, Pin, PinOff, GripVertical, X,
-  BookOpen, FileText, Loader2, Upload, Download, Pencil,
+  BookOpen, FileText, Loader2, Upload, Download, Pencil, Search,
   Key, Hash, MessageSquare, Bot, Image, Video, File,
   type LucideIcon,
 } from 'lucide-react'
@@ -43,6 +43,7 @@ import { Modal } from '../../components/ui/Modal'
 import { Avatar } from '../../components/ui/UserAvatar'
 import { cn } from '../../lib/utils'
 import toast from 'react-hot-toast'
+
 
 function parseDocContent(content: string | null): { url: string; filename: string | null; size: number | null } {
   if (!content) return { url: '', filename: null, size: null }
@@ -153,39 +154,28 @@ function InfoCardContent({
 
       case 'document': {
         const { url: docUrl, filename } = parseDocContent(item.content)
-        const isPdf = !!docUrl && (docUrl.toLowerCase().includes('.pdf') || filename?.toLowerCase().endsWith('.pdf'))
         return docUrl ? (
-          <div className="mt-2 space-y-2">
-            <div className="flex items-center gap-2">
-              <a
-                href={docUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex-1 min-w-0 flex items-center gap-2.5 bg-muted/50 dark:bg-card border border-border rounded-lg px-3 py-2.5 text-sm text-primary hover:bg-primary/10 transition-colors"
-              >
-                <FileText className="w-4 h-4 shrink-0" />
-                <div className="flex-1 min-w-0">
-                  <p className="truncate font-medium">{item.title}</p>
-                  {filename && filename !== item.title && <p className="truncate text-[11px] text-muted-foreground">{filename}</p>}
-                </div>
-              </a>
-              <button
-                onClick={() => downloadFromUrl(docUrl, filename || item.title || 'download')}
-                title="Download file"
-                className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
-              >
-                <Download className="w-3.5 h-3.5" />
-                Download
-              </button>
-            </div>
-            {isPdf && (
-              <iframe
-                src={docUrl}
-                title={filename || item.title}
-                className="w-full rounded-lg border border-border"
-                style={{ height: '420px' }}
-              />
-            )}
+          <div className="mt-2 flex items-center gap-2">
+            <a
+              href={docUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex-1 min-w-0 flex items-center gap-2.5 bg-muted/50 dark:bg-card border border-border rounded-lg px-3 py-2.5 text-sm text-primary hover:bg-primary/10 transition-colors"
+            >
+              <FileText className="w-4 h-4 shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="truncate font-medium">{item.title}</p>
+                {filename && filename !== item.title && <p className="truncate text-[11px] text-muted-foreground">{filename}</p>}
+              </div>
+            </a>
+            <button
+              onClick={() => downloadFromUrl(docUrl, filename || item.title || 'download')}
+              title="Download file"
+              className="flex items-center gap-1.5 px-3 py-2.5 rounded-lg border border-border text-xs text-muted-foreground hover:text-foreground hover:bg-muted transition-colors shrink-0"
+            >
+              <Download className="w-3.5 h-3.5" />
+              Download
+            </button>
           </div>
         ) : <p className="text-xs text-muted-foreground mt-2">No file uploaded</p>
       }
@@ -930,6 +920,7 @@ export default function InfoPage() {
   const [showModal, setShowModal] = useState(false)
   const [editItem, setEditItem] = useState<any>(null)
   const [filter, setFilter] = useState('')
+  const [search, setSearch] = useState('')
   const [activeId, setActiveId] = useState<string | null>(null)
 
   const sensors = useSensors(
@@ -967,7 +958,16 @@ export default function InfoPage() {
     setEditItem(null)
   }
 
-  const allDisplayed = filter ? items.filter((i) => i.type === filter) : items
+  const q = search.trim().toLowerCase()
+  const allDisplayed = items.filter((i) => {
+    if (filter && i.type !== filter) return false
+    if (!q) return true
+    return (
+      i.title?.toLowerCase().includes(q) ||
+      i.note?.toLowerCase().includes(q) ||
+      i.content?.toLowerCase().includes(q)
+    )
+  })
   const pinned = allDisplayed.filter((i) => i.pinned)
   const unpinned = allDisplayed.filter((i) => !i.pinned)
   const displayed = [...pinned, ...unpinned]
@@ -990,15 +990,37 @@ export default function InfoPage() {
 
   return (
     <div className="p-4 sm:p-6">
-      <div className="flex items-center justify-between mb-5 gap-3 flex-wrap">
+      <div className="flex items-start justify-between mb-5 gap-3">
         <div>
           <h2 className="section-title">Info</h2>
           <p className="section-subtitle">Team knowledge base — API keys, prompts, docs and media</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn-primary">
+        <button onClick={() => setShowModal(true)} className="btn-primary shrink-0">
           <Plus className="w-4 h-4" />
           New Box
         </button>
+      </div>
+
+      <div className="flex items-center gap-3 mb-4">
+        <div className="relative flex-1 max-w-sm">
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search info boxes…"
+            className="input pr-8 h-9"
+            style={{ paddingLeft: '2.25rem' }}
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <X className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="flex gap-1 mb-5 overflow-x-auto pb-1 -mx-1 px-1">
