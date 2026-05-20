@@ -309,7 +309,7 @@ export function TaskCard({
         <div className="flex items-start gap-2">
           <span className={`mt-[5px] w-2 h-2 rounded-full shrink-0 ${priorityInfo?.dot || 'bg-muted-foreground'}`} />
           <div className="flex-1 min-w-0">
-            <p className={`text-sm font-semibold text-foreground leading-snug ${expanded ? '' : 'line-clamp-1'}`}>{task.title}</p>
+            <p className="text-sm font-semibold text-foreground leading-snug line-clamp-2">{task.title}</p>
             {!expanded && task.description && (
               <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{task.description}</p>
             )}
@@ -414,6 +414,10 @@ export function TaskCard({
 
         {expanded && (
           <div className="mt-4 space-y-4 border-t border-border pt-4" onClick={(e) => e.stopPropagation()}>
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Title</p>
+              <p className="text-sm font-semibold text-foreground leading-snug">{task.title}</p>
+            </div>
             {task.description && (
               <div>
                 <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">Description</p>
