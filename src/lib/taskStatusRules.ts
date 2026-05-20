@@ -14,7 +14,7 @@ export const CREATOR_STATUS_OPTIONS: StatusOption[] = [
 export const ASSIGNEE_STATUS_OPTIONS: StatusOption[] = [
   { value: 'in_progress', status: 'in_progress', label: 'In Progress' },
   { value: 'couldnt_do', status: 'couldnt_do', label: "Couldn't Do" },
-  { value: 'done', status: 'in_review', label: 'Done' },
+  { value: 'done', status: 'done', label: 'Done' },
 ]
 
 export function getTaskStatusOptions(task: any, userId: string | undefined): StatusOption[] {
@@ -52,14 +52,6 @@ export function resolveTaskStatusChange(
   const match = options.find((option) => option.value === nextValue)
 
   if (!match) return { allowed: false, status: null, message: null }
-
-  if (match.value === 'done' && match.status === 'in_review') {
-    return {
-      allowed: true,
-      status: 'in_review',
-      message: 'Marked as done and sent for creator review.',
-    }
-  }
 
   return { allowed: true, status: match.status, message: null }
 }

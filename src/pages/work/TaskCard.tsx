@@ -125,7 +125,7 @@ export function TaskCard({
       try {
         const { task: updated } = await api.updateAssigneeStatus(task.id, user.id, opt.value === 'done' ? 'done' : opt.value)
         onUpdate?.(updated)
-        if (opt.value === 'done') toast.success('Marked as done and sent for creator review.')
+        if (opt.value === 'done') toast.success('Marked as done.')
       } catch (err: any) { toast.error(err.message) }
       return
     }
@@ -324,31 +324,33 @@ export function TaskCard({
         </div>
 
         {/* Meta row: badges + assignees */}
-        <div className="mt-2 flex items-center gap-2 flex-wrap pl-4">
-          <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', statusInfo?.color || 'bg-muted text-muted-foreground')}>{statusInfo?.label}</span>
-          <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', priorityInfo?.color || 'bg-muted text-muted-foreground')}>{priorityInfo?.label}</span>
-          {task.due_date && (
-            <span className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive font-semibold' : 'text-muted-foreground'}`}>
-              <Calendar className="w-3 h-3" />
-              {format(parseISO(task.due_date), 'MMM d, yyyy')}
-              {dueDaysLabel && <span className="opacity-75">· {dueDaysLabel}</span>}
-            </span>
-          )}
-          <div className="ml-auto flex items-center gap-2 shrink-0">
+        <div className="mt-2 flex items-start gap-2 pl-4 min-w-0">
+          <div className="flex items-center gap-1.5 flex-wrap flex-1 min-w-0">
+            <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', statusInfo?.color || 'bg-muted text-muted-foreground')}>{statusInfo?.label}</span>
+            <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', priorityInfo?.color || 'bg-muted text-muted-foreground')}>{priorityInfo?.label}</span>
+            {task.due_date && (
+              <span className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive font-semibold' : 'text-muted-foreground'}`}>
+                <Calendar className="w-3 h-3" />
+                {format(parseISO(task.due_date), 'MMM d, yyyy')}
+                {dueDaysLabel && <span className="opacity-75">· {dueDaysLabel}</span>}
+              </span>
+            )}
+          </div>
+          <div className="flex items-center gap-1.5 shrink-0">
             {task.creator && (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
                 <User className="w-3 h-3 shrink-0" />
-                <span className="truncate max-w-[80px]">{task.creator.name}</span>
+                <span className="truncate max-w-[64px]">{task.creator.name}</span>
               </div>
             )}
             {isMultiAssigned ? (
-              <div className="flex items-center gap-1.5">
+              <div className="flex items-center gap-1">
                 <AssigneeStack assignments={taskAssignments} />
                 <span className="text-xs text-muted-foreground">{taskAssignments.length}</span>
               </div>
             ) : task.profiles ? (
               <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                <span className="truncate max-w-[72px]">{task.profiles.name}</span>
+                <span className="truncate max-w-[64px]">{task.profiles.name}</span>
                 <Avatar name={task.profiles.name} src={task.profiles.avatar_url} size="xs" />
               </div>
             ) : null}
