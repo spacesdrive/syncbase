@@ -324,7 +324,7 @@ export function TaskCard({
         </div>
 
         {/* Meta row: badges + assignees */}
-        <div className="flex items-center gap-2 flex-wrap pl-4">
+        <div className="mt-2 flex items-center gap-2 flex-wrap pl-4">
           <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', statusInfo?.color || 'bg-muted text-muted-foreground')}>{statusInfo?.label}</span>
           <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', priorityInfo?.color || 'bg-muted text-muted-foreground')}>{priorityInfo?.label}</span>
           {task.due_date && (
@@ -356,14 +356,14 @@ export function TaskCard({
         </div>
 
         {!expanded && latestCouldntDoComment && (
-          <p className="pl-4 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 line-clamp-1">
+          <p className="mt-1 pl-4 flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 line-clamp-1">
             <XCircle className="w-3 h-3 shrink-0" />
             {extractBlockedText(latestCouldntDoComment.content)}
           </p>
         )}
 
         {/* Action row */}
-        <div className="flex items-center gap-1.5 flex-wrap pl-4" onClick={(e) => e.stopPropagation()}>
+        <div className="mt-2 flex items-center gap-1.5 flex-wrap pl-4" onClick={(e) => e.stopPropagation()}>
           {reorderEnabled && dragHandleProps && (
             <button
               type="button"
