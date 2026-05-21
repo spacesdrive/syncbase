@@ -762,4 +762,142 @@ export const api = {
       return { added: true }
     }
   },
+
+  // ── Wiki ───────────────────────────────────────────────────────
+  getWikiPages: async (teamId: string) => {
+    const { data, error } = await supabase
+      .from('wiki_pages')
+      .select('*, author:profiles!author_id(id, name, avatar_url)')
+      .eq('team_id', teamId)
+      .eq('archived', false)
+      .order('sort_order', { ascending: true })
+      .order('created_at', { ascending: false })
+    if (error) throw new Error(error.message)
+    return { pages: data || [] }
+  },
+
+  getWikiPage: async (pageId: string) => {
+    const { data, error } = await supabase
+      .from('wiki_pages')
+      .select('*, author:profiles!author_id(id, name, avatar_url)')
+      .eq('id', pageId)
+      .single()
+    if (error) throw new Error(error.message)
+    return { page: data }
+  },
+
+  createWikiPage: async (teamId: string, data: { title: string; parent_id?: string | null; icon?: string }) => {
+    const userId = await currentUserId()
+    const { data: page, error } = await supabase
+      .from('wiki_pages')
+      .insert({
+        team_id: teamId,
+        author_id: userId,
+        title: data.title || 'Untitled',
+        parent_id: data.parent_id ?? null,
+        icon: data.icon || '📄',
+        content: null,
+        content_json: null,
+        archived: false,
+        sort_order: 0,
+        updated_at: new Date().toISOString(),
+      })
+      .select('*, author:profiles!author_id(id, name, avatar_url)')
+      .single()
+    if (error) throw new Error(error.message)
+    return { page }
+  },
+
+  updateWikiPage: async (pageId: string, updates: {
+    title?: string
+    content?: string | null
+    content_json?: any[] | null
+    icon?: string
+    cover_image?: string | null
+    parent_id?: string | null
+    archived?: boolean
+    sort_order?: number
+  }) => {
+    const { data: page, error } = await supabase
+      .from('wiki_pages')
+      .update({ ...updates, updated_at: new Date().toISOString() })
+      .eq('id', pageId)
+      .select('*, author:profiles!author_id(id, name, avatar_url)')
+      .single()
+    if (error) throw new Error(error.message)
+    return { page }
+  },
+
+  deleteWikiPage: async (pageId: string) => {
+    const { error } = await supabase.from('wiki_pages').delete().eq('id', pageId)
+    if (error) throw new Error(error.message)
+    return {}
+  },
+
+  getWikiBacklinks: async (pageId: string) => {
+    const { data, error } = await supabase
+      .from('wiki_backlinks')
+      .select('*, source:wiki_pages!source_page_id(id, title, icon)')
+      .eq('target_page_id', pageId)
+    if (error) throw new Error(error.message)
+    return { backlinks: data || [] }
+  },
+
+  setWikiBacklinks: async (teamId: string, sourcePageId: string, targetPageIds: string[]) => {
+    await supabase.from('wiki_backlinks').delete().eq('source_page_id', sourcePageId)
+    if (targetPageIds.length === 0) return {}
+    const rows = targetPageIds.map((targetPageId) => ({ team_id: teamId, source_page_id: sourcePageId, target_page_id: targetPageId }))
+    const { error } = await supabase.from('wiki_backlinks').insert(rows)
+    if (error) throw new Error(error.message)
+    return {}
+  },
+
+  toggleWikiFavorite: async (pageId: string) => {
+    const userId = await currentUserId()
+    const { data: existing } = await supabase
+      .from('wiki_favorites')
+      .select('id')
+      .eq('page_id', pageId)
+      .eq('user_id', userId)
+      .maybeSingle()
+    if (existing) {
+      await supabase.from('wiki_favorites').delete().eq('id', existing.id)
+      return { favorited: false }
+    } else {
+      await supabase.from('wiki_favorites').insert({ page_id: pageId, user_id: userId })
+      return { favorited: true }
+    }
+  },
+
+  getWikiFavorites: async (teamId: string) => {
+    const userId = await currentUserId()
+    const { data, error } = await supabase
+      .from('wiki_favorites')
+      .select('*, page:wiki_pages!page_id(id, title, icon, team_id)')
+      .eq('user_id', userId)
+    if (error) throw new Error(error.message)
+    const filtered = (data || []).filter((f: any) => f.page?.team_id === teamId)
+    return { favorites: filtered }
+  },
+
+  saveWikiPageHistory: async (teamId: string, pageId: string, title: string, content: string | null, contentJson: any[] | null) => {
+    const userId = await currentUserId()
+    await supabase.from('wiki_page_history').insert({
+      team_id: teamId,
+      page_id: pageId,
+      title,
+      content,
+      content_json: contentJson,
+      edited_by: userId,
+    })
+    return {}
+  },
+
+  reorderWikiPages: async (orderedIds: string[]) => {
+    const updates = orderedIds.map((id, index) =>
+      supabase.from('wiki_pages').update({ sort_order: index }).eq('id', id)
+    )
+    await Promise.all(updates)
+    return {}
+  },
 }

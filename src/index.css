@@ -242,3 +242,44 @@ select option {
   from { height: var(--radix-collapsible-content-height); }
   to   { height: 0; }
 }
+
+/* ── BlockNote editor integration ──────────────────────────────── */
+.wiki-editor-root .bn-editor {
+  padding: 0;
+  font-family: inherit;
+}
+
+.wiki-editor-root .bn-editor .bn-block-outer {
+  padding: 0 2px;
+}
+
+.wiki-editor-root [data-color-scheme='light'] {
+  --bn-colors-editor-background: transparent;
+  --bn-colors-editor-text: oklch(0.129 0.042 264.695);
+  --bn-colors-menu-background: oklch(1 0 0);
+  --bn-colors-menu-text: oklch(0.129 0.042 264.695);
+  --bn-colors-tooltip-background: oklch(0.129 0.042 264.695);
+  --bn-colors-tooltip-text: oklch(1 0 0);
+  --bn-colors-hovered-background: oklch(0.93 0.01 255);
+  --bn-colors-selected-background: oklch(0.93 0.01 255);
+  --bn-colors-side-menu: oklch(0.55 0.025 265);
+  --bn-colors-shadow: rgba(0, 0, 0, 0.1);
+  --bn-border-radius: 8px;
+  --bn-font-family: inherit;
+}
+
+.dark .wiki-editor-root [data-color-scheme='dark'],
+.wiki-editor-root [data-color-scheme='dark'] {
+  --bn-colors-editor-background: transparent;
+  --bn-colors-editor-text: oklch(0.984 0.003 247.858);
+  --bn-colors-menu-background: oklch(0.208 0.042 265.755);
+  --bn-colors-menu-text: oklch(0.984 0.003 247.858);
+  --bn-colors-tooltip-background: oklch(0.984 0.003 247.858);
+  --bn-colors-tooltip-text: oklch(0.208 0.042 265.755);
+  --bn-colors-hovered-background: oklch(0.278 0.033 265);
+  --bn-colors-selected-background: oklch(0.278 0.033 265);
+  --bn-colors-side-menu: oklch(0.55 0.025 265);
+  --bn-colors-shadow: rgba(0, 0, 0, 0.4);
+  --bn-border-radius: 8px;
+  --bn-font-family: inherit;
+}

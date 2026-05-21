@@ -26,6 +26,9 @@ yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
 
+# Supabase
+supabase/
+
 # OS / editor files
 .DS_Store
 .vscode/

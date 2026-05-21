@@ -94,6 +94,7 @@ function ProtectedRoutes() {
           <Route path="/info" element={<InfoPage />} />
           <Route path="/chat" element={<Chat />} />
           <Route path="/wiki" element={<WikiPage />} />
+          <Route path="/wiki/:pageId" element={<WikiPage />} />
           <Route path="/settings/*" element={<Settings />} />
           <Route path="*" element={<Navigate to="/posts" replace />} />
         </Routes>
