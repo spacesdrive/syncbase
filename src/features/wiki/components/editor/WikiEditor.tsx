@@ -1,6 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react'
-import { useCreateBlockNote } from '@blocknote/react'
-import { BlockNoteView } from '@blocknote/react'
+import { useCreateBlockNote, BlockNoteViewRaw } from '@blocknote/react'
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/react/style.css'
 import { uploadToCloudinary } from '../../../../lib/cloudinary'
@@ -59,7 +58,7 @@ export function WikiEditor({ pageId, initialContent, onChange, editable = true }
 
   return (
     <div className="wiki-editor-root">
-      <BlockNoteView
+      <BlockNoteViewRaw
         editor={editor}
         editable={editable}
         theme={dark ? 'dark' : 'light'}
