@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Modal } from '../../components/ui/Modal'
+import { HeroDatePickerField } from '../../components/ui/HeroDatePicker'
 import { TASK_PRIORITIES } from '../../lib/constants'
 import { CREATOR_STATUS_OPTIONS } from '../../lib/taskStatusRules'
 import { api } from '../../lib/api'
@@ -84,6 +85,7 @@ export function NewTaskModal({
     if (!open || isEditing) return
     const draftable: any = { ...form }
     delete draftable.reopen_note
+    delete draftable.due_date
     localStorage.setItem(DRAFT_KEY, JSON.stringify(draftable))
   }, [form, open, isEditing])
 
@@ -276,11 +278,9 @@ export function NewTaskModal({
 
           <div>
             <label className="form-label">Due date</label>
-            <input
-              type="date"
+            <HeroDatePickerField
               value={form.due_date}
-              onChange={(e) => set('due_date', e.target.value)}
-              className="input"
+              onChange={(v) => set('due_date', v)}
             />
           </div>
         </div>

@@ -4,6 +4,7 @@ import { api } from '../../lib/api'
 import { cn } from '../../lib/utils'
 import { format } from 'date-fns'
 import toast from 'react-hot-toast'
+import { HeroDatePickerField } from '../../components/ui/HeroDatePicker'
 
 const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
   active:    { label: 'Active',    className: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800' },
@@ -362,11 +363,9 @@ export function ProjectGoals({ projectId, teamId }: { projectId: string; teamId:
               </div>
               <div>
                 <label className="block text-xs text-muted-foreground mb-1">Deadline</label>
-                <input
-                  type="date"
+                <HeroDatePickerField
                   value={form.deadline}
-                  onChange={(e) => setField('deadline', e.target.value)}
-                  className="input text-sm"
+                  onChange={(v) => setField('deadline', v)}
                 />
               </div>
             </div>

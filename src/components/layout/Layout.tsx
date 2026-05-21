@@ -44,7 +44,7 @@ export function Layout({ children }: LayoutProps) {
         <TopBar title={title} />
         <main
           className={`flex-1 min-h-0 ${
-            pathname === '/chat' ? 'overflow-hidden' : 'overflow-y-auto overscroll-contain'
+            pathname === '/chat' || pathname.startsWith('/wiki') ? 'overflow-hidden' : 'overflow-y-auto overscroll-contain'
           }`}
         >
           {children}

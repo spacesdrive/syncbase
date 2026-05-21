@@ -63,7 +63,7 @@ export default function WikiPage() {
   )
 
   return (
-    <div className="flex h-full overflow-hidden -m-4 sm:-m-6">
+    <div className="flex h-full overflow-hidden">
       <WikiSidebar
         pages={pages}
         selectedPageId={selectedPage?.id}

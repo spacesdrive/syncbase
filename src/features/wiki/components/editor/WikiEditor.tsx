@@ -1,7 +1,8 @@
 import { useEffect, useRef, useCallback } from 'react'
-import { useCreateBlockNote, BlockNoteViewRaw, BlockNoteDefaultUI } from '@blocknote/react'
+import { useCreateBlockNote } from '@blocknote/react'
+import { BlockNoteView } from '@blocknote/mantine'
 import '@blocknote/core/fonts/inter.css'
-import '@blocknote/react/style.css'
+import '@blocknote/mantine/style.css'
 import { uploadToCloudinary } from '../../../../lib/cloudinary'
 import { useTheme as useAppTheme } from '../../../../hooks/useTheme'
 
@@ -58,14 +59,12 @@ export function WikiEditor({ pageId, initialContent, onChange, editable = true }
 
   return (
     <div className="wiki-editor-root">
-      <BlockNoteViewRaw
+      <BlockNoteView
         editor={editor}
         editable={editable}
         theme={dark ? 'dark' : 'light'}
         onChange={handleChange}
-      >
-        <BlockNoteDefaultUI />
-      </BlockNoteViewRaw>
+      />
     </div>
   )
 }

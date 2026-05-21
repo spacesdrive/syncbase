@@ -5,7 +5,14 @@ import { api } from '../../lib/api'
 import { uploadFileToCloudinary } from '../../lib/cloudinary'
 import { supabase } from '../../lib/supabase'
 import { Avatar } from '../../components/ui/UserAvatar'
+import { Avatar as ShadAvatar, AvatarFallback, AvatarImage } from '../../components/ui/avatar'
 import { Separator } from '../../components/ui/separator'
+import { Badge } from '../../components/ui/badge'
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader,
+  AlertDialogTitle, AlertDialogTrigger,
+} from '../../components/ui/alert-dialog'
 import { cn } from '../../lib/utils'
 import {
   Send, Paperclip, Hash, Download, X, Loader2, Trash2,
@@ -543,11 +550,14 @@ export default function Chat() {
                 >
                   <div className="flex gap-2">
                     <div className="relative shrink-0">
-                      <Avatar name={m.profiles?.name} src={m.profiles?.avatar_url} size="sm" />
+                      <ShadAvatar className="w-9 h-9">
+                        <AvatarImage src={m.profiles?.avatar_url} alt={m.profiles?.name} />
+                        <AvatarFallback className="text-xs">{m.profiles?.name?.slice(0, 2).toUpperCase()}</AvatarFallback>
+                      </ShadAvatar>
                       {unread > 0 && (
-                        <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-primary text-primary-foreground text-[9px] rounded-full flex items-center justify-center font-bold leading-none">
+                        <Badge variant="default" className="absolute -top-1 -right-1 h-4 w-4 p-0 text-[9px] flex items-center justify-center rounded-full">
                           {unread > 9 ? '9+' : unread}
-                        </span>
+                        </Badge>
                       )}
                     </div>
                     <div className="min-w-0">
@@ -753,13 +763,23 @@ export default function Chat() {
                                   >
                                     <Pencil className="w-3 h-3" />
                                   </button>
-                                  <button
-                                    onClick={() => handleDelete(msg.id)}
-                                    className="p-1 text-muted-foreground/40 hover:text-destructive rounded transition-colors"
-                                    title="Delete"
-                                  >
-                                    <Trash2 className="w-3 h-3" />
-                                  </button>
+                                  <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                      <button className="p-1 text-muted-foreground/40 hover:text-destructive rounded transition-colors" title="Delete">
+                                        <Trash2 className="w-3 h-3" />
+                                      </button>
+                                    </AlertDialogTrigger>
+                                    <AlertDialogContent>
+                                      <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete message?</AlertDialogTitle>
+                                        <AlertDialogDescription>This message will be permanently removed for everyone.</AlertDialogDescription>
+                                      </AlertDialogHeader>
+                                      <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={() => handleDelete(msg.id)}>Delete</AlertDialogAction>
+                                      </AlertDialogFooter>
+                                    </AlertDialogContent>
+                                  </AlertDialog>
                                 </>
                               )}
                             </div>

@@ -1,16 +1,24 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Menu, Star, Trash2, ChevronRight, MoreHorizontal, CheckCircle2 } from 'lucide-react'
+import { Menu, Star, CheckCircle2 } from 'lucide-react'
 import { cn } from '../../../lib/utils'
 import { api } from '../../../lib/api'
 import { useAuth } from '../../../contexts/AuthContext'
-import { useTeam } from '../../../contexts/TeamContext'
 import { WikiEditor } from './editor/WikiEditor'
 import { WikiBacklinks } from './WikiBacklinks'
-import { getDraft, saveDraft } from '../services/offlineService'
+import { getDraft } from '../services/offlineService'
 import type { WikiPage } from '../types/wiki'
 import { formatDistanceToNow } from 'date-fns'
 import toast from 'react-hot-toast'
+import { Button } from '../../../components/ui/button'
+import { Badge } from '../../../components/ui/badge'
+import {
+  Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList,
+  BreadcrumbPage, BreadcrumbSeparator,
+} from '../../../components/ui/breadcrumb'
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger,
+} from '../../../components/ui/alert-dialog'
 
 const ICONS = ['📄', '📝', '📖', '🗒️', '💡', '🔥', '⭐', '🎯', '🚀', '✅', '📌', '🔗', '🗂️', '📊', '🖼️', '💬', '🔒', '⚙️']
 
@@ -25,7 +33,6 @@ interface WikiPageViewProps {
 
 export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPage, onMobileSidebarOpen }: WikiPageViewProps) {
   const { user } = useAuth()
-  const { team } = useTeam()
   const [title, setTitle] = useState(page.title)
   const [savingIndicator, setSavingIndicator] = useState<'idle' | 'saving' | 'saved'>('idle')
   const [favorited, setFavorited] = useState(false)
@@ -36,14 +43,11 @@ export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPa
   const titleRef = useRef<HTMLInputElement>(null)
   const pendingContentRef = useRef<{ blocks: any[]; text: string } | null>(null)
 
-  // Reset state when page changes
   useEffect(() => {
     setTitle(page.title)
     setSavingIndicator('idle')
     setShowIconPicker(false)
     pendingContentRef.current = null
-
-    // Check for offline draft
     getDraft(page.id).then((draft) => {
       if (draft && draft.savedAt > new Date(page.updated_at || page.created_at).getTime()) {
         setHasDraft(true)
@@ -106,17 +110,7 @@ export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPa
     }
   }
 
-  function handleRestoreDraft() {
-    setHasDraft(false)
-  }
-
-  function dismissDraft() {
-    setHasDraft(false)
-    setDraftContent(null)
-    import('../services/offlineService').then(({ deleteDraft }) => deleteDraft(page.id))
-  }
-
-  // Breadcrumbs: find ancestor chain
+  // Breadcrumbs
   const breadcrumbs: WikiPage[] = []
   let current: WikiPage | undefined = pages.find((p) => p.id === page.parent_id)
   while (current) {
@@ -129,75 +123,103 @@ export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPa
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Top bar */}
-      <div className="flex items-center gap-2 px-4 py-2 border-b border-border shrink-0 bg-background/80 backdrop-blur-sm">
-        {/* Mobile hamburger */}
-        <button
+      <div className="flex items-center gap-2 px-3 py-2 border-b border-border shrink-0 bg-background/80 backdrop-blur-sm">
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={onMobileSidebarOpen}
-          className="sm:hidden p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+          className="sm:hidden h-8 w-8"
         >
           <Menu className="w-4 h-4" />
-        </button>
+        </Button>
 
-        {/* Breadcrumbs */}
-        <nav className="flex items-center gap-1 flex-1 min-w-0 text-xs text-muted-foreground overflow-hidden">
-          {breadcrumbs.map((crumb) => (
-            <button
-              key={crumb.id}
-              onClick={() => onSelectPage(crumb.id)}
-              className="flex items-center gap-1 hover:text-foreground transition-colors shrink-0 max-w-[120px] truncate"
-            >
-              <span>{crumb.icon}</span>
-              <span className="truncate">{crumb.title}</span>
-              <ChevronRight className="w-3 h-3 shrink-0" />
-            </button>
-          ))}
-          <span className="truncate font-medium text-foreground">{page.title}</span>
-        </nav>
+        {/* Breadcrumb */}
+        <Breadcrumb className="flex-1 min-w-0 overflow-hidden">
+          <BreadcrumbList className="flex-nowrap overflow-hidden text-xs">
+            {breadcrumbs.map((crumb) => (
+              <BreadcrumbItem key={crumb.id} className="shrink-0">
+                <BreadcrumbLink
+                  asChild
+                  className="flex items-center gap-1 max-w-[100px] truncate cursor-pointer"
+                >
+                  <button onClick={() => onSelectPage(crumb.id)}>
+                    <span>{crumb.icon}</span>
+                    <span className="truncate">{crumb.title}</span>
+                  </button>
+                </BreadcrumbLink>
+                <BreadcrumbSeparator />
+              </BreadcrumbItem>
+            ))}
+            <BreadcrumbItem>
+              <BreadcrumbPage className="text-xs truncate max-w-[180px]">{page.title}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
 
         {/* Actions */}
         <div className="flex items-center gap-1 shrink-0">
           {savingIndicator === 'saving' && (
-            <span className="text-[10px] text-muted-foreground">Saving…</span>
+            <span className="text-[10px] text-muted-foreground hidden sm:block">Saving…</span>
           )}
           {savingIndicator === 'saved' && (
-            <span className="flex items-center gap-1 text-[10px] text-green-500">
+            <span className="hidden sm:flex items-center gap-1 text-[10px] text-green-500">
               <CheckCircle2 className="w-3 h-3" /> Saved
             </span>
           )}
 
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={toggleFavorite}
             title={favorited ? 'Unfavorite' : 'Favorite'}
-            className={cn(
-              'p-1.5 rounded-md transition-colors',
-              favorited
-                ? 'text-amber-400 hover:text-amber-500'
-                : 'text-muted-foreground hover:text-foreground hover:bg-muted'
-            )}
+            className={cn('h-8 w-8', favorited ? 'text-amber-400 hover:text-amber-500' : '')}
           >
             <Star className={cn('w-4 h-4', favorited && 'fill-current')} />
-          </button>
+          </Button>
 
-          <button
-            onClick={() => onDeletePage(page.id)}
-            title="Delete page"
-            className="p-1.5 rounded-md text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="ghost" size="icon" title="Delete page" className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/10">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete page?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  <strong>"{page.title}"</strong> and all its sub-pages will be permanently deleted. This cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                  onClick={() => onDeletePage(page.id)}
+                >
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
       </div>
 
       {/* Draft recovery banner */}
       {hasDraft && (
-        <div className="flex items-center gap-3 px-4 py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800 text-xs">
-          <span className="text-amber-700 dark:text-amber-400 flex-1">
-            You have unsaved draft changes from {draftContent ? 'a previous session' : 'offline editing'}.
-          </span>
-          <button onClick={handleRestoreDraft} className="font-medium text-amber-700 dark:text-amber-400 hover:underline">
+        <div className="flex items-center gap-3 px-4 py-2.5 bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-800 text-xs shrink-0">
+          <Badge variant="warning" className="shrink-0">Draft</Badge>
+          <span className="text-amber-700 dark:text-amber-400 flex-1">Unsaved changes from a previous session.</span>
+          <button onClick={() => setHasDraft(false)} className="font-medium text-amber-700 dark:text-amber-400 hover:underline">
             Restore
           </button>
-          <button onClick={dismissDraft} className="text-amber-600 dark:text-amber-500 hover:underline">
+          <button
+            onClick={() => {
+              setHasDraft(false)
+              setDraftContent(null)
+              import('../services/offlineService').then(({ deleteDraft }) => deleteDraft(page.id))
+            }}
+            className="text-amber-600 dark:text-amber-500 hover:underline"
+          >
             Discard
           </button>
         </div>
@@ -206,6 +228,7 @@ export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPa
       {/* Page content */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-3xl mx-auto px-6 sm:px-12 pt-12 sm:pt-16 pb-16">
+
           {/* Icon */}
           <div className="relative mb-4">
             <button
@@ -215,7 +238,6 @@ export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPa
             >
               {page.icon || '📄'}
             </button>
-
             {showIconPicker && (
               <div className="absolute top-14 left-0 z-20 bg-background border border-border rounded-xl shadow-xl p-3 grid grid-cols-9 gap-1">
                 {ICONS.map((icon) => (
@@ -243,14 +265,15 @@ export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPa
           />
 
           {/* Meta */}
-          <div className="flex items-center gap-3 mb-10 text-xs text-muted-foreground border-b border-border pb-6">
+          <div className="flex flex-wrap items-center gap-2 mb-10 pb-6 border-b border-border">
             {page.author && (
-              <span>By <span className="text-foreground/70 font-medium">{page.author.name}</span></span>
+              <Badge variant="secondary" className="text-xs font-normal">
+                By {page.author.name}
+              </Badge>
             )}
-            <span className="text-muted-foreground/60">·</span>
-            <span>
+            <Badge variant="outline" className="text-xs font-normal text-muted-foreground">
               Updated {formatDistanceToNow(new Date(page.updated_at || page.created_at), { addSuffix: true })}
-            </span>
+            </Badge>
           </div>
 
           {/* Editor */}

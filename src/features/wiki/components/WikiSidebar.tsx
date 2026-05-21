@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react'
 import { Plus, Search, ChevronRight, ChevronDown, FileText, Trash2, Star, X, BookOpen, PanelLeftClose } from 'lucide-react'
 import { cn } from '../../../lib/utils'
+import { Button } from '../../../components/ui/button'
 import type { WikiPage, WikiPageTree } from '../types/wiki'
 
 function buildTree(pages: WikiPage[]): WikiPageTree[] {
@@ -144,20 +145,12 @@ export function WikiSidebar({
         <div className="flex items-center gap-2 mb-2">
           <BookOpen className="w-4 h-4 text-primary shrink-0" />
           <span className="text-sm font-semibold text-foreground flex-1 min-w-0">Wiki</span>
-          <button
-            onClick={() => onCreatePage()}
-            title="New page"
-            className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-          >
+          <Button variant="ghost" size="icon" onClick={() => onCreatePage()} title="New page" className="shrink-0 h-7 w-7 text-muted-foreground hover:text-primary hover:bg-primary/10">
             <Plus className="w-3.5 h-3.5" />
-          </button>
-          <button
-            onClick={onMobileClose}
-            title="Close sidebar"
-            className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors sm:hidden"
-          >
+          </Button>
+          <Button variant="ghost" size="icon" onClick={onMobileClose} title="Close sidebar" className="shrink-0 h-7 w-7 text-muted-foreground sm:hidden">
             <PanelLeftClose className="w-3.5 h-3.5" />
-          </button>
+          </Button>
         </div>
 
         {/* Search */}

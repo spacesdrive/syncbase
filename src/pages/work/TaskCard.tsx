@@ -2,6 +2,12 @@ import { useEffect, useMemo, useState } from 'react'
 import { differenceInCalendarDays, format, isPast, isToday, parseISO } from 'date-fns'
 import { Calendar, Check, ChevronDown, GripVertical, MessageSquare, Pencil, Send, SmilePlus, Trash2, User, X, XCircle } from 'lucide-react'
 import { Avatar } from '../../components/ui/UserAvatar'
+import { Badge } from '../../components/ui/badge'
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogHeader,
+  AlertDialogTitle, AlertDialogTrigger,
+} from '../../components/ui/alert-dialog'
 import { TASK_PRIORITIES, TASK_STATUSES } from '../../lib/constants'
 import { ASSIGNEE_STATUS_OPTIONS, getTaskStatusOptions, resolveTaskStatusChange } from '../../lib/taskStatusRules'
 import { api } from '../../lib/api'
@@ -221,7 +227,6 @@ export function TaskCard({
   }
 
   async function handleDelete() {
-    if (!confirm('Delete this task?')) return
     try {
       await api.deleteTask(team.id, task.id)
       onDelete?.(task.id)
@@ -267,15 +272,28 @@ export function TaskCard({
     return (
       <div className={cn(
         'card p-3 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing',
-        isDone && 'border-green-200 dark:border-green-800 bg-green-50/40 dark:bg-green-900/10',
         task.status === 'rejected' && 'border-red-200 dark:border-red-800 bg-red-50/30 dark:bg-red-900/10',
         task.status === 'couldnt_do' && 'border-orange-200 dark:border-orange-800 bg-orange-50/30 dark:bg-orange-900/10',
       )}>
         <div className="flex items-start justify-between gap-2 mb-2">
           <p className={cn('text-sm font-medium leading-snug line-clamp-2', isTerminal ? 'line-through text-muted-foreground' : 'text-foreground')}>{task.title}</p>
-          <button onClick={handleDelete} className="p-0.5 text-muted-foreground/40 hover:text-destructive transition-colors shrink-0">
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <button className="p-0.5 text-muted-foreground/40 hover:text-destructive transition-colors shrink-0">
+                <Trash2 className="w-3.5 h-3.5" />
+              </button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete task?</AlertDialogTitle>
+                <AlertDialogDescription>"{task.title}" will be permanently deleted.</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={handleDelete}>Delete</AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </div>
         {latestCouldntDoComment && (
           <p className="mb-2 flex items-start gap-1 text-[11px] text-amber-600 dark:text-amber-400 line-clamp-2">
@@ -309,7 +327,6 @@ export function TaskCard({
       <div
         className={cn(
           'card cursor-pointer p-4 transition-all duration-200 hover:shadow-md',
-          isDone && 'border-green-200 dark:border-green-800 bg-green-50/40 dark:bg-green-900/10',
           task.status === 'rejected' && 'border-red-200 dark:border-red-800 bg-red-50/30 dark:bg-red-900/10',
           task.status === 'couldnt_do' && 'border-orange-200 dark:border-orange-800 bg-orange-50/30 dark:bg-orange-900/10',
           expanded && 'ring-1 ring-primary/20 border-primary/30'
@@ -337,8 +354,8 @@ export function TaskCard({
         {/* Meta row: badges + assignees */}
         <div className="mt-2 flex items-start gap-2 pl-4 min-w-0">
           <div className="flex items-center gap-1.5 flex-wrap flex-1 min-w-0">
-            <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', statusInfo?.color || 'bg-muted text-muted-foreground')}>{statusInfo?.label}</span>
-            <span className={cn('inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', priorityInfo?.color || 'bg-muted text-muted-foreground')}>{priorityInfo?.label}</span>
+            <Badge className={cn('text-xs', statusInfo?.color || 'bg-muted text-muted-foreground')} variant="outline">{statusInfo?.label}</Badge>
+            <Badge className={cn('text-xs', priorityInfo?.color || 'bg-muted text-muted-foreground')} variant="outline">{priorityInfo?.label}</Badge>
             {task.due_date && (
               <span className={`flex items-center gap-1 text-xs ${isOverdue ? 'text-destructive font-semibold' : 'text-muted-foreground'}`}>
                 <Calendar className="w-3 h-3" />
@@ -415,13 +432,23 @@ export function TaskCard({
             >
               <Pencil className="w-3.5 h-3.5" />
             </button>
-            <button
-              onClick={handleDelete}
-              className="p-2 text-muted-foreground/40 transition-colors hover:text-destructive"
-              title="Delete ticket"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-            </button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <button className="p-2 text-muted-foreground/40 transition-colors hover:text-destructive" title="Delete ticket">
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete task?</AlertDialogTitle>
+                  <AlertDialogDescription>"{task.title}" will be permanently deleted.</AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction className="bg-destructive text-destructive-foreground hover:bg-destructive/90" onClick={handleDelete}>Delete</AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </div>
 

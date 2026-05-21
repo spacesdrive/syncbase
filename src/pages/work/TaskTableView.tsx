@@ -188,6 +188,11 @@ function TaskDetail({
   const comments = useMemo(() => sortComments(task.task_comments), [task.task_comments])
   const latestBlockedComment = [...comments].reverse().find((c) => isBlockedComment(c.content))
 
+  async function syncAllAssignees(taskId: string, status: string) {
+    const others = taskAssignments.filter((a: any) => a.user_id !== user?.id)
+    await Promise.allSettled(others.map((a: any) => api.updateAssigneeStatus(taskId, a.user_id, status)))
+  }
+
   async function handleStatusChange(nextValue: string) {
     if (currentAssignment && !isCreator) {
       const opt = ASSIGNEE_STATUS_OPTIONS.find((o: any) => o.value === nextValue)
@@ -195,6 +200,7 @@ function TaskDetail({
       if (opt.value === 'couldnt_do') { setShowReasonBox(true); return }
       try {
         const { task: updated } = await api.updateAssigneeStatus(task.id, user!.id, opt.value)
+        await syncAllAssignees(task.id, opt.value)
         onUpdate?.(updated)
         if (opt.value === 'done') toast.success('Marked as done.')
       } catch (err: any) { toast.error(err.message) }
@@ -203,9 +209,9 @@ function TaskDetail({
     const resolved = resolveTaskStatusChange(task, user?.id, nextValue)
     if (!resolved.allowed) return
     if (resolved.status === 'couldnt_do') { setShowReasonBox(true); return }
-    if (currentAssignment) {
-      try { await api.updateAssigneeStatus(task.id, user!.id, resolved.status) } catch {}
-    }
+    await Promise.allSettled(
+      taskAssignments.map((a: any) => api.updateAssigneeStatus(task.id, a.user_id, resolved.status))
+    )
     try {
       const { task: updated } = await api.updateTask(team.id, task.id, { status: resolved.status })
       onUpdate?.(updated)
@@ -220,9 +226,12 @@ function TaskDetail({
       if (reason.trim()) await api.addTaskComment(task.id, `[blocked]: ${reason.trim()}`)
       if (currentAssignment && !isCreator) {
         const { task: updated } = await api.updateAssigneeStatus(task.id, user!.id, 'couldnt_do')
+        await syncAllAssignees(task.id, 'couldnt_do')
         onUpdate?.(updated)
       } else {
-        if (currentAssignment) try { await api.updateAssigneeStatus(task.id, user!.id, 'couldnt_do') } catch {}
+        await Promise.allSettled(
+          taskAssignments.map((a: any) => api.updateAssigneeStatus(task.id, a.user_id, 'couldnt_do'))
+        )
         const { task: updated } = await api.updateTask(team.id, task.id, { status: 'couldnt_do' })
         onUpdate?.(updated)
       }
@@ -286,55 +295,16 @@ function TaskDetail({
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">Assignees</p>
           <div className="divide-y divide-border rounded-lg border border-border overflow-hidden">
-            {taskAssignments.map((a: any) => {
-              const sInfo = TASK_STATUSES.find(s => s.id === a.status)
-              return (
-                <div key={a.id} className="flex items-center gap-3 bg-muted/20 px-3 py-2">
-                  <Avatar name={a.assignee?.name} src={a.assignee?.avatar_url} size="xs" className="shrink-0" />
-                  <span className="text-sm text-foreground flex-1 truncate">{a.assignee?.name}</span>
-                  <span className={cn('shrink-0 inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium', sInfo?.color || 'bg-muted text-muted-foreground')}>
-                    {sInfo?.label || a.status}
-                  </span>
-                </div>
-              )
-            })}
+            {taskAssignments.map((a: any) => (
+              <div key={a.id} className="flex items-center gap-3 bg-muted/20 px-3 py-2">
+                <Avatar name={a.assignee?.name} src={a.assignee?.avatar_url} size="xs" className="shrink-0" />
+                <span className="text-sm text-foreground truncate">{a.assignee?.name}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
-      <div className="flex items-end gap-4 flex-wrap">
-        {canChangeStatus && (
-          <div>
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Status</p>
-            <select
-              value={selectedStatusValue}
-              onChange={(e) => handleStatusChange(e.target.value)}
-              className="filter-select"
-            >
-              {visibleStatusOptions.map((o: any) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
-          </div>
-        )}
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Priority</p>
-          <select
-            value={task.priority || 'medium'}
-            onChange={async (e) => {
-              try {
-                const { task: updated } = await api.updateTask(team.id, task.id, { priority: e.target.value })
-                onUpdate?.(updated)
-              } catch (err: any) { toast.error(err.message) }
-            }}
-            className="filter-select"
-          >
-            {TASK_PRIORITIES.map((p) => (
-              <option key={p.id} value={p.id}>{p.label}</option>
-            ))}
-          </select>
-        </div>
-      </div>
 
       {showReasonBox && (
         <form onSubmit={submitReason} className="flex gap-2 items-center bg-destructive/5 border border-destructive/30 rounded-lg p-2.5">
@@ -538,7 +508,6 @@ function TaskRow({
           'border-b border-border transition-colors cursor-pointer',
           selected ? 'bg-primary/5' : 'hover:bg-muted/50',
           expanded && 'bg-muted/30',
-          !selected && task.status === 'done' && 'bg-green-50/40 dark:bg-green-900/10',
           !selected && task.status === 'rejected' && 'bg-red-50/30 dark:bg-red-900/10',
           !selected && task.status === 'couldnt_do' && 'bg-orange-50/30 dark:bg-orange-900/10',
         )}

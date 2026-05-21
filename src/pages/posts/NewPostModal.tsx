@@ -7,6 +7,7 @@ import { useTeam } from '../../contexts/TeamContext'
 import { uploadToCloudinary } from '../../lib/cloudinary'
 import { Image, X, Calendar, Lock, Users, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
+import { HeroDateTimePickerField } from '../../components/ui/HeroDatePicker'
 
 const DRAFT_KEY = 'draft_new_post'
 
@@ -261,11 +262,9 @@ export function NewPostModal({ open, onClose, onCreated, onSaved, post = null }:
             <Calendar className="inline w-3.5 h-3.5 mr-1 mb-0.5" />
             Schedule for (optional)
           </label>
-          <input
-            type="datetime-local"
+          <HeroDateTimePickerField
             value={form.scheduled_at}
-            onChange={(e) => setForm((f) => ({ ...f, scheduled_at: e.target.value }))}
-            className="input"
+            onChange={(v) => setForm((f) => ({ ...f, scheduled_at: v }))}
           />
         </div>
 

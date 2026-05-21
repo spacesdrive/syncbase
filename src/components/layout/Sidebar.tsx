@@ -8,7 +8,6 @@ import {
 import { useAuth } from '../../contexts/AuthContext'
 import { useTeam } from '../../contexts/TeamContext'
 import { Avatar } from '../ui/UserAvatar'
-import { cn } from '../../lib/utils'
 import {
   Sidebar,
   SidebarContent,

@@ -5,6 +5,7 @@ import { useAuth } from '../../contexts/AuthContext'
 import { AuroraBackground } from '../../components/aceternity/AuroraBackground'
 import { Spotlight } from '../../components/aceternity/Spotlight'
 import { BrandLogo } from '../../components/ui/BrandLogo'
+import { Button } from '../../components/ui/button'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
 import toast from 'react-hot-toast'
 
@@ -67,14 +68,15 @@ export default function Login() {
         </div>
 
         <div className="bg-card/90 backdrop-blur-xl rounded-2xl border border-border/60 shadow-xl shadow-black/8 p-7 space-y-4">
-          <button
+          <Button
+            variant="outline"
             onClick={handleGoogle}
             disabled={loadingGoogle || loadingEmail}
-            className="btn-secondary w-full"
+            className="w-full"
           >
             {loadingGoogle ? <Loader2 className="w-4 h-4 animate-spin text-primary" /> : <GoogleIcon />}
             {loadingGoogle ? 'Signing in…' : 'Continue with Google'}
-          </button>
+          </Button>
 
           <div className="flex items-center gap-3">
             <div className="flex-1 h-px bg-border" />
@@ -111,14 +113,10 @@ export default function Login() {
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
-            <button
-              type="submit"
-              disabled={loadingEmail || loadingGoogle}
-              className="btn-primary w-full"
-            >
-              {loadingEmail ? <Loader2 className="w-4 h-4 animate-spin" /> : null}
+            <Button type="submit" disabled={loadingEmail || loadingGoogle} className="w-full">
+              {loadingEmail && <Loader2 className="w-4 h-4 animate-spin" />}
               {loadingEmail ? 'Signing in…' : 'Sign in'}
-            </button>
+            </Button>
           </form>
 
           <p className="text-xs text-center text-muted-foreground">

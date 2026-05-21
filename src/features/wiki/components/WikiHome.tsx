@@ -1,6 +1,5 @@
 import { useMemo } from 'react'
 import { BookOpen, Plus, Clock, FileText, Menu } from 'lucide-react'
-import { cn } from '../../../lib/utils'
 import { formatDistanceToNow } from 'date-fns'
 import type { WikiPage } from '../types/wiki'
 
