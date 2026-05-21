@@ -537,7 +537,10 @@ function TaskRow({
         className={cn(
           'border-b border-border transition-colors cursor-pointer',
           selected ? 'bg-primary/5' : 'hover:bg-muted/50',
-          expanded && 'bg-muted/30'
+          expanded && 'bg-muted/30',
+          !selected && task.status === 'done' && 'bg-green-50/40 dark:bg-green-900/10',
+          !selected && task.status === 'rejected' && 'bg-red-50/30 dark:bg-red-900/10',
+          !selected && task.status === 'couldnt_do' && 'bg-orange-50/30 dark:bg-orange-900/10',
         )}
       >
         {/* Drag handle */}
@@ -573,7 +576,7 @@ function TaskRow({
         >
           <div className="flex items-center gap-2 min-w-0">
             <ChevronDown className={cn('w-3.5 h-3.5 shrink-0 text-muted-foreground/60 transition-transform duration-150', expanded && 'rotate-180')} />
-            <span className="text-sm font-medium text-foreground truncate">{task.title}</span>
+            <span className={cn('text-sm font-medium truncate', ['done', 'rejected', 'couldnt_do'].includes(task.status) ? 'line-through text-muted-foreground' : 'text-foreground')}>{task.title}</span>
             {isMultiAssigned && (
               <span className="shrink-0 text-[11px] text-muted-foreground bg-muted px-1.5 py-0.5 rounded-md">
                 {taskAssignments.length} assignees

@@ -260,11 +260,19 @@ export function TaskCard({
   }
 
   /* ── Compact card (Kanban) ────────────────────────────────────── */
+  const isDone = task.status === 'done'
+  const isTerminal = isDone || task.status === 'rejected' || task.status === 'couldnt_do'
+
   if (compact) {
     return (
-      <div className="card p-3 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing">
+      <div className={cn(
+        'card p-3 hover:shadow-md transition-shadow cursor-grab active:cursor-grabbing',
+        isDone && 'border-green-200 dark:border-green-800 bg-green-50/40 dark:bg-green-900/10',
+        task.status === 'rejected' && 'border-red-200 dark:border-red-800 bg-red-50/30 dark:bg-red-900/10',
+        task.status === 'couldnt_do' && 'border-orange-200 dark:border-orange-800 bg-orange-50/30 dark:bg-orange-900/10',
+      )}>
         <div className="flex items-start justify-between gap-2 mb-2">
-          <p className="text-sm font-medium text-foreground leading-snug line-clamp-2">{task.title}</p>
+          <p className={cn('text-sm font-medium leading-snug line-clamp-2', isTerminal ? 'line-through text-muted-foreground' : 'text-foreground')}>{task.title}</p>
           <button onClick={handleDelete} className="p-0.5 text-muted-foreground/40 hover:text-destructive transition-colors shrink-0">
             <Trash2 className="w-3.5 h-3.5" />
           </button>
@@ -301,6 +309,9 @@ export function TaskCard({
       <div
         className={cn(
           'card cursor-pointer p-4 transition-all duration-200 hover:shadow-md',
+          isDone && 'border-green-200 dark:border-green-800 bg-green-50/40 dark:bg-green-900/10',
+          task.status === 'rejected' && 'border-red-200 dark:border-red-800 bg-red-50/30 dark:bg-red-900/10',
+          task.status === 'couldnt_do' && 'border-orange-200 dark:border-orange-800 bg-orange-50/30 dark:bg-orange-900/10',
           expanded && 'ring-1 ring-primary/20 border-primary/30'
         )}
         onClick={() => setExpanded((v) => !v)}
@@ -309,7 +320,7 @@ export function TaskCard({
         <div className="flex items-start gap-2">
           <span className={`mt-[5px] w-2 h-2 rounded-full shrink-0 ${priorityInfo?.dot || 'bg-muted-foreground'}`} />
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-semibold text-foreground leading-snug line-clamp-2">{task.title}</p>
+            <p className={cn('text-sm font-semibold leading-snug line-clamp-2', isTerminal ? 'line-through text-muted-foreground' : 'text-foreground')}>{task.title}</p>
             {!expanded && task.description && (
               <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{task.description}</p>
             )}
