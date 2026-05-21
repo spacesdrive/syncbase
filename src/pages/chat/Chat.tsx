@@ -607,7 +607,8 @@ export default function Chat() {
           <div className="flex flex-1 flex-col gap-2 rounded-md px-4 pt-0 pb-4 overflow-hidden">
             <div className="flex size-full flex-1">
               <div className="relative flex flex-1 flex-col overflow-y-hidden -me-4">
-                <div className="flex h-40 w-full grow flex-col justify-start gap-4 overflow-y-auto py-2 pe-4 pb-4">
+                <div className="flex h-40 w-full grow flex-col overflow-y-auto py-2 pe-4 pb-4">
+                  <div className="flex-1" />
                   {loadingMsgs ? (
                     <div className="flex items-center justify-center py-8">
                       <Loader2 className="w-5 h-5 text-muted-foreground animate-spin" />

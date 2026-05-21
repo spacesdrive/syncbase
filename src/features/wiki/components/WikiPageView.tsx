@@ -205,19 +205,19 @@ export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPa
 
       {/* Page content */}
       <div className="flex-1 overflow-y-auto">
-        <div className="max-w-3xl mx-auto px-4 sm:px-8 pt-8 pb-4">
+        <div className="max-w-3xl mx-auto px-6 sm:px-12 pt-12 sm:pt-16 pb-16">
           {/* Icon */}
-          <div className="relative mb-3">
+          <div className="relative mb-4">
             <button
               onClick={() => setShowIconPicker((v) => !v)}
-              className="text-4xl hover:opacity-70 transition-opacity select-none"
+              className="text-5xl hover:opacity-70 transition-opacity select-none leading-none"
               title="Change icon"
             >
               {page.icon || '📄'}
             </button>
 
             {showIconPicker && (
-              <div className="absolute top-12 left-0 z-20 bg-background border border-border rounded-xl shadow-xl p-3 grid grid-cols-9 gap-1">
+              <div className="absolute top-14 left-0 z-20 bg-background border border-border rounded-xl shadow-xl p-3 grid grid-cols-9 gap-1">
                 {ICONS.map((icon) => (
                   <button
                     key={icon}
@@ -239,14 +239,15 @@ export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPa
             onChange={(e) => handleTitleChange(e.target.value)}
             onBlur={handleTitleBlur}
             placeholder="Untitled"
-            className="w-full text-3xl sm:text-4xl font-bold bg-transparent outline-none text-foreground placeholder:text-muted-foreground/40 mb-6 resize-none leading-tight"
+            className="w-full text-3xl sm:text-4xl font-bold bg-transparent outline-none text-foreground placeholder:text-muted-foreground/40 mb-4 resize-none leading-tight"
           />
 
           {/* Meta */}
-          <div className="flex items-center gap-3 mb-8 text-xs text-muted-foreground">
+          <div className="flex items-center gap-3 mb-10 text-xs text-muted-foreground border-b border-border pb-6">
             {page.author && (
-              <span>By {page.author.name}</span>
+              <span>By <span className="text-foreground/70 font-medium">{page.author.name}</span></span>
             )}
+            <span className="text-muted-foreground/60">·</span>
             <span>
               Updated {formatDistanceToNow(new Date(page.updated_at || page.created_at), { addSuffix: true })}
             </span>
@@ -263,7 +264,7 @@ export function WikiPageView({ page, pages, onSavePage, onDeletePage, onSelectPa
         </div>
 
         {/* Backlinks */}
-        <div className="max-w-3xl mx-auto">
+        <div className="max-w-3xl mx-auto px-6 sm:px-12 pb-16">
           <WikiBacklinks pageId={page.id} onSelectPage={onSelectPage} />
         </div>
       </div>

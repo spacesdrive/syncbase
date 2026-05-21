@@ -1,5 +1,5 @@
 import { useEffect, useRef, useCallback } from 'react'
-import { useCreateBlockNote, BlockNoteViewRaw } from '@blocknote/react'
+import { useCreateBlockNote, BlockNoteViewRaw, BlockNoteDefaultUI } from '@blocknote/react'
 import '@blocknote/core/fonts/inter.css'
 import '@blocknote/react/style.css'
 import { uploadToCloudinary } from '../../../../lib/cloudinary'
@@ -63,7 +63,9 @@ export function WikiEditor({ pageId, initialContent, onChange, editable = true }
         editable={editable}
         theme={dark ? 'dark' : 'light'}
         onChange={handleChange}
-      />
+      >
+        <BlockNoteDefaultUI />
+      </BlockNoteViewRaw>
     </div>
   )
 }
