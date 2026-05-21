@@ -2,6 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { Toaster } from 'react-hot-toast'
 import App from './App'
+// @ts-expect-error CSS handled by bundler
 import './index.css'
 
 if ('serviceWorker' in navigator) {
@@ -11,7 +12,7 @@ if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register('/sw.js', { updateViaCache: 'none' })
       .then((registration) => {
-        registration.update().catch(() => {})
+        registration.update().catch(() => { })
 
         navigator.serviceWorker.addEventListener('controllerchange', () => {
           if (reloading) return
@@ -19,7 +20,7 @@ if ('serviceWorker' in navigator) {
           window.location.reload()
         })
       })
-      .catch(() => {})
+      .catch(() => { })
   })
 }
 

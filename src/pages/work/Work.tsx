@@ -1,9 +1,11 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Plus, List, Columns, Calendar, Users, ArrowUpDown, CheckSquare, X, Search } from 'lucide-react'
+import { arrayMove } from '@dnd-kit/sortable'
 import { api } from '../../lib/api'
 import { useTeam } from '../../contexts/TeamContext'
 import { useRealtime } from '../../hooks/useRealtime'
 import { TaskTableView } from './TaskTableView'
+import { SortableTaskList } from './SortableTaskList'
 import { KanbanView } from './KanbanView'
 import { CalendarView } from './CalendarView'
 import { PodsView } from './PodsView'
@@ -109,6 +111,24 @@ export default function Work() {
   function openModalForColumn(status: string) {
     setDefaultStatus(status)
     setShowModal(true)
+  }
+
+  async function handleReorder(activeId: string, overId: string) {
+    const oldIndex = displayedTasks.findIndex((t) => t.id === activeId)
+    const newIndex = displayedTasks.findIndex((t) => t.id === overId)
+    if (oldIndex === -1 || newIndex === -1) return
+    const reordered = arrayMove(displayedTasks, oldIndex, newIndex)
+    setTasks((prev) => {
+      const reorderedIds = new Set(reordered.map((t) => t.id))
+      return [...reordered, ...prev.filter((t) => !reorderedIds.has(t.id))]
+    })
+    try {
+      const projectId = reordered[0]?.project_id ?? null
+      await api.reorderTasks(team.id, projectId, reordered.map((t) => t.id))
+    } catch (err: any) {
+      toast.error(err.message)
+      loadTasks()
+    }
   }
 
   const activeFilters = filters.priority.length > 0 || filters.status.length > 0
@@ -281,7 +301,21 @@ export default function Work() {
           }
         />
       ) : view === 'list' ? (
-        <TaskTableView tasks={displayedTasks} onUpdate={handleUpdate} onDelete={handleDelete} draggable={sort === 'manual'} />
+        <>
+          {/* Mobile: card-based list (same as ProjectDetail) */}
+          <div className="sm:hidden">
+            <SortableTaskList
+              tasks={displayedTasks}
+              onUpdate={handleUpdate}
+              onDelete={handleDelete}
+              onReorder={sort === 'manual' ? handleReorder : undefined}
+            />
+          </div>
+          {/* Desktop: full table view */}
+          <div className="hidden sm:block">
+            <TaskTableView tasks={displayedTasks} onUpdate={handleUpdate} onDelete={handleDelete} draggable={sort === 'manual'} />
+          </div>
+        </>
       ) : view === 'kanban' ? (
         <KanbanView
           tasks={displayedTasks}

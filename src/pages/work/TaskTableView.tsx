@@ -196,7 +196,7 @@ function TaskDetail({
       try {
         const { task: updated } = await api.updateAssigneeStatus(task.id, user!.id, opt.value)
         onUpdate?.(updated)
-        if (opt.value === 'done') toast.success('Marked as done and sent for creator review.')
+        if (opt.value === 'done') toast.success('Marked as done.')
       } catch (err: any) { toast.error(err.message) }
       return
     }
