@@ -139,37 +139,39 @@ export function WikiSidebar({
   const sidebarContent = (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center gap-2 px-3 py-3 border-b border-border shrink-0">
-        <BookOpen className="w-4 h-4 text-primary shrink-0" />
-        <span className="text-sm font-semibold flex-1">Wiki</span>
-        <button
-          onClick={() => onCreatePage()}
-          title="New page"
-          className="p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
-        >
-          <Plus className="w-3.5 h-3.5" />
-        </button>
-        <button
-          onClick={onMobileClose}
-          className="p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors sm:hidden"
-        >
-          <PanelLeftClose className="w-3.5 h-3.5" />
-        </button>
-      </div>
+      <div className="px-3 pt-3 pb-2 border-b border-border shrink-0">
+        {/* Title row */}
+        <div className="flex items-center gap-2 mb-2">
+          <BookOpen className="w-4 h-4 text-primary shrink-0" />
+          <span className="text-sm font-semibold text-foreground flex-1 min-w-0">Wiki</span>
+          <button
+            onClick={() => onCreatePage()}
+            title="New page"
+            className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-primary hover:bg-primary/10 transition-colors"
+          >
+            <Plus className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={onMobileClose}
+            title="Close sidebar"
+            className="shrink-0 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted transition-colors sm:hidden"
+          >
+            <PanelLeftClose className="w-3.5 h-3.5" />
+          </button>
+        </div>
 
-      {/* Search */}
-      <div className="px-3 py-2 border-b border-border shrink-0">
-        <label className="flex items-center gap-1.5 h-7 rounded-md border border-border bg-background px-2 focus-within:ring-1 focus-within:ring-ring">
+        {/* Search */}
+        <label className="flex items-center gap-1.5 h-7 w-full rounded-md border border-border bg-background px-2 focus-within:ring-1 focus-within:ring-ring">
           <Search className="w-3 h-3 text-muted-foreground shrink-0" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search pages…"
-            className="flex-1 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
+            className="flex-1 min-w-0 text-xs bg-transparent outline-none text-foreground placeholder:text-muted-foreground"
           />
           {search && (
-            <button onClick={() => setSearch('')} className="text-muted-foreground hover:text-foreground">
+            <button onClick={() => setSearch('')} className="shrink-0 text-muted-foreground hover:text-foreground">
               <X className="w-3 h-3" />
             </button>
           )}
