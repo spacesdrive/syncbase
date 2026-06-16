@@ -1,5 +1,6 @@
 import { useMemo } from 'react'
 import { BookOpen, Plus, Clock, FileText, Menu } from 'lucide-react'
+import { Button } from '../../../components/ui/button'
 import { formatDistanceToNow } from 'date-fns'
 import type { WikiPage } from '../types/wiki'
 
@@ -80,10 +81,10 @@ export function WikiHome({ loading, pages, onCreatePage, onSelectPage, onMobileS
                   Create your first wiki page to start building your team's knowledge base.
                 </p>
               </div>
-              <button onClick={onCreatePage} className="btn-primary mt-2">
-                <Plus className="w-4 h-4" />
+              <Button onClick={onCreatePage} className="mt-2">
+                <Plus data-icon="inline-start" />
                 Create first page
-              </button>
+              </Button>
             </div>
           ) : (
             <>

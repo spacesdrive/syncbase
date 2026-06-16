@@ -37,3 +37,6 @@ supabase/
 *.suo
 *.swp
 *.swo
+
+.agents
+skills-lock.json

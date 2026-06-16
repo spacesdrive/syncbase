@@ -1,8 +1,10 @@
 import { lazy, Suspense, Component, type ReactNode } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { Toaster } from './components/ui/sonner'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { TeamProvider, useTeam } from './contexts/TeamContext'
 import { Layout } from './components/layout/Layout'
+import { Button } from './components/ui/button'
 
 const Login = lazy(() => import('./pages/auth/Login'))
 const Signup = lazy(() => import('./pages/auth/Signup'))
@@ -37,12 +39,9 @@ class ErrorBoundary extends Component<{ children: ReactNode }, ErrorBoundaryStat
             <pre className="text-xs text-muted-foreground bg-muted rounded-lg p-3 overflow-auto whitespace-pre-wrap mb-4 max-h-40">
               {this.state.error.message}
             </pre>
-            <button
-              onClick={() => window.location.reload()}
-              className="btn-primary w-full"
-            >
+            <Button onClick={() => window.location.reload()} className="w-full">
               Reload page
-            </button>
+            </Button>
           </div>
         </div>
       )
@@ -127,6 +126,7 @@ export default function App() {
           </TeamProvider>
         </AuthProvider>
       </ErrorBoundary>
+      <Toaster position="bottom-right" />
     </BrowserRouter>
   )
 }

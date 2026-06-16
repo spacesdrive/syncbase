@@ -4,7 +4,7 @@ import { api } from '../../../lib/api'
 import { useTeam } from '../../../contexts/TeamContext'
 import { useWikiStore } from '../stores/wikiStore'
 import { saveDraft, deleteDraft } from '../services/offlineService'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import type { WikiPage } from '../types/wiki'
 
 export function useWikiPages() {

@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { supabase } from '../lib/supabase'
 import { api } from '../lib/api'
 import { useAuth } from './AuthContext'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 interface TeamContextValue {
   team: any

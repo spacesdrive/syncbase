@@ -8,7 +8,7 @@ import { WikiBacklinks } from './WikiBacklinks'
 import { getDraft } from '../services/offlineService'
 import type { WikiPage } from '../types/wiki'
 import { formatDistanceToNow } from 'date-fns'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 import { Button } from '../../../components/ui/button'
 import { Badge } from '../../../components/ui/badge'
 import {
