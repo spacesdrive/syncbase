@@ -1,8 +1,25 @@
 import { useState, useEffect } from 'react'
-import { Modal } from '../../components/ui/Modal'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../../components/ui/dialog'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
+import { Textarea } from '../../components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select'
+import { Separator } from '../../components/ui/separator'
 import { api } from '../../lib/api'
 import { useTeam } from '../../contexts/TeamContext'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 const STATUS_OPTIONS = [
   { id: 'planning',  label: 'Planning' },
@@ -74,50 +91,59 @@ export function NewProjectModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={isEditing ? 'Edit Project' : 'New Project'}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="form-label">Project name *</label>
-          <input
-            value={form.name}
-            onChange={(e) => set('name', e.target.value)}
-            placeholder="e.g. Q3 Marketing Campaign"
-            className="input"
-            required
-          />
-        </div>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose() }}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle>{isEditing ? 'Edit Project' : 'New Project'}</DialogTitle>
+        </DialogHeader>
 
-        <div>
-          <label className="form-label">Description</label>
-          <textarea
-            value={form.description}
-            onChange={(e) => set('description', e.target.value)}
-            placeholder="Optional details…"
-            rows={3}
-            className="input resize-none"
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="project-name">Project name *</Label>
+            <Input
+              id="project-name"
+              value={form.name}
+              onChange={(e) => set('name', e.target.value)}
+              placeholder="e.g. Q3 Marketing Campaign"
+              required
+            />
+          </div>
 
-        <div>
-          <label className="form-label">Status</label>
-          <select
-            value={form.status}
-            onChange={(e) => set('status', e.target.value)}
-            className="input"
-          >
-            {STATUS_OPTIONS.map((s) => (
-              <option key={s.id} value={s.id}>{s.label}</option>
-            ))}
-          </select>
-        </div>
+          <div className="flex flex-col gap-2">
+            <Label htmlFor="project-desc">Description</Label>
+            <Textarea
+              id="project-desc"
+              value={form.description}
+              onChange={(e) => set('description', e.target.value)}
+              placeholder="Optional details…"
+              rows={3}
+              className="resize-none"
+            />
+          </div>
 
-        <div className="flex justify-end gap-2 pt-1 border-t border-border">
-          <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-          <button type="submit" disabled={saving} className="btn-primary">
-            {saving ? (isEditing ? 'Saving…' : 'Creating…') : (isEditing ? 'Save Project' : 'Create Project')}
-          </button>
-        </div>
-      </form>
-    </Modal>
+          <div className="flex flex-col gap-2">
+            <Label>Status</Label>
+            <Select value={form.status} onValueChange={(v) => set('status', v)}>
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {STATUS_OPTIONS.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>{s.label}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+
+          <Separator />
+          <div className="flex justify-end gap-2">
+            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+            <Button type="submit" disabled={saving}>
+              {saving ? (isEditing ? 'Saving…' : 'Creating…') : (isEditing ? 'Save Project' : 'Create Project')}
+            </Button>
+          </div>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }

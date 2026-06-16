@@ -3,7 +3,7 @@ import { MoreHorizontal, Pencil, Trash2, FolderOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../lib/api'
 import { NewProjectModal } from './NewProjectModal'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 const STATUS_STYLES: Record<string, string> = {
   planning:  'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800',

@@ -6,6 +6,8 @@ import { useRealtime } from '../../hooks/useRealtime'
 import { ProjectCard } from './ProjectCard'
 import { NewProjectModal } from './NewProjectModal'
 import { EmptyState } from '../../components/ui/EmptyState'
+import { Button } from '../../components/ui/button'
+import { Tabs, TabsList, TabsTrigger } from '../../components/ui/tabs'
 
 const STATUS_FILTERS = [
   { id: '',          label: 'All' },
@@ -48,29 +50,27 @@ export default function Projects() {
     : projects
 
   return (
-    <div className="page-container-mobile">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="section-title">Projects</h2>
-          <p className="section-subtitle mt-0.5">{projects.length} {projects.length === 1 ? 'project' : 'projects'}</p>
+          <h2 className="text-lg font-semibold tracking-tight">Projects</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">{projects.length} {projects.length === 1 ? 'project' : 'projects'}</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn-primary self-start sm:self-auto">
-          <Plus className="w-4 h-4" />
+        <Button size="sm" className="self-start sm:self-auto" onClick={() => setShowModal(true)}>
+          <Plus data-icon="inline-start" />
           New Project
-        </button>
+        </Button>
       </div>
 
-      <div className="tab-bar mb-5 mobile-scroll-row">
-        {STATUS_FILTERS.map((f) => (
-          <button
-            key={f.id}
-            onClick={() => setStatusFilter(f.id)}
-            className={`tab-item ${statusFilter === f.id ? 'tab-item-active' : 'tab-item-inactive'}`}
-          >
-            {f.label}
-          </button>
-        ))}
-      </div>
+      <Tabs value={statusFilter || '__all__'} onValueChange={(v) => setStatusFilter(v === '__all__' ? '' : v)} className="mb-5">
+        <TabsList className="mobile-scroll-row">
+          {STATUS_FILTERS.map((f) => (
+            <TabsTrigger key={f.id} value={f.id || '__all__'}>
+              {f.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {!loading && displayed.length === 0 ? (
         <EmptyState
@@ -83,14 +83,14 @@ export default function Projects() {
           }
           action={
             statusFilter ? (
-              <button onClick={() => setStatusFilter('')} className="btn-secondary">
+              <Button variant="secondary" onClick={() => setStatusFilter('')}>
                 Clear filter
-              </button>
+              </Button>
             ) : (
-              <button onClick={() => setShowModal(true)} className="btn-primary">
-                <Plus className="w-4 h-4" />
+              <Button onClick={() => setShowModal(true)}>
+                <Plus className="size-4" />
                 Create project
-              </button>
+              </Button>
             )
           }
         />
