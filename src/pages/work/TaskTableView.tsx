@@ -26,6 +26,9 @@ import { Badge } from '../../components/ui/badge'
 import { Button } from '../../components/ui/button'
 import { Separator } from '../../components/ui/separator'
 import {
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
+} from '../../components/ui/table'
+import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from '../../components/ui/dropdown-menu'
 import { TASK_PRIORITIES, TASK_STATUSES } from '../../lib/constants'
@@ -35,7 +38,7 @@ import { useTeam } from '../../contexts/TeamContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { NewTaskModal } from './NewTaskModal'
 import { cn } from '../../lib/utils'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 /* ── Icon maps ─────────────────────────────────────────────────── */
 const STATUS_ICON: Record<string, React.ElementType> = {
@@ -276,7 +279,7 @@ function TaskDetail({
   }
 
   return (
-    <div className="px-4 pb-4 pt-3 space-y-4 border-t border-border bg-muted/20">
+    <div className="px-4 pb-4 pt-3 flex flex-col gap-4 border-t border-border bg-muted/20">
       {task.description && (
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-1.5">Description</p>
@@ -357,7 +360,7 @@ function TaskDetail({
         </form>
 
         {comments.length > 0 && (
-          <div className="mt-3 space-y-2">
+          <div className="mt-3 flex flex-col gap-2">
             {comments.map((comment: any) => {
               const isCouldntDo = isBlockedComment(comment.content)
               const isReopen = comment.content?.startsWith('↩ Reopened:')
@@ -501,11 +504,11 @@ function TaskRow({
 
   return (
     <>
-      <tr
+      <TableRow
         ref={rowRef as any}
         style={rowStyle}
         className={cn(
-          'border-b border-border transition-colors cursor-pointer',
+          'transition-colors cursor-pointer',
           selected ? 'bg-primary/5' : 'hover:bg-muted/50',
           expanded && 'bg-muted/30',
           !selected && task.status === 'rejected' && 'bg-red-50/30 dark:bg-red-900/10',
@@ -513,7 +516,7 @@ function TaskRow({
         )}
       >
         {/* Drag handle */}
-        <td className="w-8 px-1 py-3" onClick={(e) => e.stopPropagation()}>
+        <TableCell className="w-8 px-1 py-3" onClick={(e) => e.stopPropagation()}>
           {dragHandleProps ? (
             <button
               {...dragHandleProps}
@@ -525,9 +528,9 @@ function TaskRow({
           ) : (
             <div className="w-5" />
           )}
-        </td>
+        </TableCell>
         {/* Checkbox */}
-        <td className="w-10 px-3 py-3" onClick={(e) => { e.stopPropagation(); onToggleSelect() }}>
+        <TableCell className="w-10 px-3 py-3" onClick={(e) => { e.stopPropagation(); onToggleSelect() }}>
           <div className={cn(
             'w-4 h-4 rounded flex items-center justify-center border transition-colors',
             selected
@@ -536,10 +539,10 @@ function TaskRow({
           )}>
             {selected && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
           </div>
-        </td>
+        </TableCell>
 
         {/* Title */}
-        <td
+        <TableCell
           className="py-3 px-2 max-w-0 w-full"
           onClick={() => setExpanded(v => !v)}
         >
@@ -555,26 +558,26 @@ function TaskRow({
               <Avatar name={task.profiles.name} src={task.profiles.avatar_url} size="xs" className="shrink-0" />
             )}
           </div>
-        </td>
+        </TableCell>
 
         {/* Status */}
-        <td className="py-3 px-3 w-36" onClick={() => setExpanded(v => !v)}>
+        <TableCell className="py-3 px-3 w-36" onClick={() => setExpanded(v => !v)}>
           <div className="flex items-center gap-2 min-w-0">
             <StatusIcon className="w-4 h-4 shrink-0 text-muted-foreground" />
             <span className="text-sm text-foreground truncate">{statusInfo?.label || task.status}</span>
           </div>
-        </td>
+        </TableCell>
 
         {/* Priority */}
-        <td className="py-3 px-3 w-32" onClick={() => setExpanded(v => !v)}>
+        <TableCell className="py-3 px-3 w-32" onClick={() => setExpanded(v => !v)}>
           <div className="flex items-center gap-2">
             <PriorityIcon className="w-4 h-4 shrink-0 text-muted-foreground" />
             <span className="text-sm text-foreground">{priorityInfo?.label || task.priority}</span>
           </div>
-        </td>
+        </TableCell>
 
         {/* Due date */}
-        <td className="py-3 px-3 w-28 hidden md:table-cell" onClick={() => setExpanded(v => !v)}>
+        <TableCell className="py-3 px-3 w-28 hidden md:table-cell" onClick={() => setExpanded(v => !v)}>
           {task.due_date ? (
             <span className={cn('text-sm', isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground')}>
               {format(parseISO(task.due_date), 'MMM d')}
@@ -582,20 +585,20 @@ function TaskRow({
           ) : (
             <span className="text-sm text-muted-foreground/40">—</span>
           )}
-        </td>
+        </TableCell>
 
         {/* Creator */}
-        <td className="py-3 px-3 w-28 hidden lg:table-cell" onClick={() => setExpanded(v => !v)}>
+        <TableCell className="py-3 px-3 w-28 hidden lg:table-cell" onClick={() => setExpanded(v => !v)}>
           {task.creator && (
             <div className="flex items-center gap-1.5">
               <User className="w-3 h-3 text-muted-foreground/60 shrink-0" />
               <span className="text-xs text-muted-foreground truncate">{task.creator.name}</span>
             </div>
           )}
-        </td>
+        </TableCell>
 
         {/* Actions */}
-        <td className="py-3 px-3 w-10" onClick={(e) => e.stopPropagation()}>
+        <TableCell className="py-3 px-3 w-10" onClick={(e) => e.stopPropagation()}>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <button className="p-1 rounded hover:bg-muted transition-colors text-muted-foreground hover:text-foreground">
@@ -613,16 +616,16 @@ function TaskRow({
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
-        </td>
-      </tr>
+        </TableCell>
+      </TableRow>
 
       {/* Expanded detail */}
       {expanded && (
-        <tr>
-          <td colSpan={8} className="p-0">
+        <TableRow>
+          <TableCell colSpan={8} className="p-0">
             <TaskDetail task={task} onUpdate={onUpdate} />
-          </td>
-        </tr>
+          </TableCell>
+        </TableRow>
       )}
 
       <NewTaskModal
@@ -729,11 +732,11 @@ export function TaskTableView({
 
   const tableContent = (
     <div className="overflow-hidden rounded-md border border-border">
-      <table className="w-full">
-        <thead>
-          <tr className="border-b border-border bg-muted/50">
-            <th className="w-8 px-1" />
-            <th className="w-10 px-3 py-3 text-left">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/50">
+            <TableHead className="w-8 px-1" />
+            <TableHead className="w-10 px-3 py-3">
               <div
                 onClick={toggleAll}
                 className={cn(
@@ -747,16 +750,16 @@ export function TaskTableView({
               >
                 {(allSelected || someSelected) && <Check className="w-2.5 h-2.5 text-primary-foreground" />}
               </div>
-            </th>
-            <th className="py-3 px-2 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Title</th>
-            <th className="py-3 px-3 w-36 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Status</th>
-            <th className="py-3 px-3 w-32 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider">Priority</th>
-            <th className="py-3 px-3 w-28 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">Due</th>
-            <th className="py-3 px-3 w-28 text-left text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden lg:table-cell">Creator</th>
-            <th className="w-10 px-3" />
-          </tr>
-        </thead>
-        <tbody>
+            </TableHead>
+            <TableHead className="py-3 px-2 text-xs font-semibold uppercase tracking-wider">Title</TableHead>
+            <TableHead className="py-3 px-3 w-36 text-xs font-semibold uppercase tracking-wider">Status</TableHead>
+            <TableHead className="py-3 px-3 w-32 text-xs font-semibold uppercase tracking-wider">Priority</TableHead>
+            <TableHead className="py-3 px-3 w-28 text-xs font-semibold uppercase tracking-wider hidden md:table-cell">Due</TableHead>
+            <TableHead className="py-3 px-3 w-28 text-xs font-semibold uppercase tracking-wider hidden lg:table-cell">Creator</TableHead>
+            <TableHead className="w-10 px-3" />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {localTasks.map((task) => (
             <SortableTaskRow
               key={task.id}
@@ -768,8 +771,8 @@ export function TaskTableView({
               draggable={draggable}
             />
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   )
 

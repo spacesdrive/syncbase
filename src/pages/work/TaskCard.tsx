@@ -15,7 +15,7 @@ import { useTeam } from '../../contexts/TeamContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { NewTaskModal } from './NewTaskModal'
 import { cn } from '../../lib/utils'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 function extractBlockedText(content: string): string {
   if (content.startsWith('[blocked]:')) return content.replace('[blocked]:', '').trim()
@@ -37,7 +37,7 @@ function getStatusInfo(status: string) {
 
 function AssigneeStack({ assignments }: { assignments: any[] }) {
   return (
-    <div className="flex items-center -space-x-2">
+    <div className="flex items-center -flex gap-2">
       {assignments.slice(0, 3).map((a) => (
         <Avatar key={a.id} name={a.assignee?.name} src={a.assignee?.avatar_url} size="xs" className="ring-2 ring-background" />
       ))}
@@ -453,7 +453,7 @@ export function TaskCard({
         </div>
 
         {expanded && (
-          <div className="mt-4 space-y-4 border-t border-border pt-4" onClick={(e) => e.stopPropagation()}>
+          <div className="mt-4 flex flex-col gap-4 border-t border-border pt-4" onClick={(e) => e.stopPropagation()}>
             <div className="rounded-lg bg-muted/40 px-3 py-2.5">
               <p className="text-[10px] font-semibold uppercase tracking-widest text-muted-foreground mb-1">Task Title</p>
               <p className="text-base font-bold text-foreground leading-snug">{task.title}</p>
@@ -522,7 +522,7 @@ export function TaskCard({
               {comments.length === 0 ? (
                 <p className="mt-2 text-sm text-muted-foreground">No messages yet.</p>
               ) : (
-                <div className="mt-3 space-y-2">
+                <div className="mt-3 flex flex-col gap-2">
                   {comments.map((comment: any) => {
                     const isCouldntDo = isBlockedComment(comment.content)
                     const isReopen = comment.content?.startsWith('↩ Reopened:')
