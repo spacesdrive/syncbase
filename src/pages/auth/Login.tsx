@@ -6,12 +6,22 @@ import { AuroraBackground } from '../../components/aceternity/AuroraBackground'
 import { Spotlight } from '../../components/aceternity/Spotlight'
 import { BrandLogo } from '../../components/ui/BrandLogo'
 import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
+import { Separator } from '../../components/ui/separator'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '../../components/ui/card'
 import { Eye, EyeOff, Loader2 } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 function GoogleIcon() {
   return (
-    <svg viewBox="0 0 24 24" className="w-4 h-4" aria-hidden="true">
+    <svg viewBox="0 0 24 24" className="size-4 shrink-0" aria-hidden="true">
       <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
       <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853" />
       <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05" />
@@ -52,6 +62,8 @@ export default function Login() {
     }
   }
 
+  const busy = loadingGoogle || loadingEmail
+
   return (
     <AuroraBackground>
       <Spotlight className="-top-40 left-0 md:left-60 md:-top-20" fill="indigo" />
@@ -61,70 +73,98 @@ export default function Login() {
         transition={{ duration: 0.4, ease: 'easeOut' }}
         className="relative z-10 w-full max-w-sm px-4"
       >
-        <div className="text-center mb-8">
-          <BrandLogo size="lg" className="justify-center mb-5" />
-          <h1 className="text-2xl font-bold text-foreground tracking-tight">Welcome back</h1>
-          <p className="text-muted-foreground mt-1.5 text-sm">Sign in to your workspace</p>
-        </div>
-
-        <div className="bg-card/90 backdrop-blur-xl rounded-2xl border border-border/60 shadow-xl shadow-black/8 p-7 space-y-4">
-          <Button
-            variant="outline"
-            onClick={handleGoogle}
-            disabled={loadingGoogle || loadingEmail}
-            className="w-full"
-          >
-            {loadingGoogle ? <Loader2 className="w-4 h-4 animate-spin text-primary" /> : <GoogleIcon />}
-            {loadingGoogle ? 'Signing in…' : 'Continue with Google'}
-          </Button>
-
-          <div className="flex items-center gap-3">
-            <div className="flex-1 h-px bg-border" />
-            <span className="text-xs text-muted-foreground">or</span>
-            <div className="flex-1 h-px bg-border" />
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col items-center gap-2 text-center">
+            <BrandLogo size="lg" className="justify-center mb-3" />
+            <h1 className="text-2xl font-bold tracking-tight">Welcome back</h1>
+            <p className="text-muted-foreground text-sm">Sign in to your workspace</p>
           </div>
 
-          <form onSubmit={handleEmail} className="space-y-3">
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Email"
-              className="input"
-              required
-              autoComplete="email"
-            />
-            <div className="relative">
-              <input
-                type={showPassword ? 'text' : 'password'}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Password"
-                className="input pr-10"
-                required
-                autoComplete="current-password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword((v) => !v)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                tabIndex={-1}
-              >
-                {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-            <Button type="submit" disabled={loadingEmail || loadingGoogle} className="w-full">
-              {loadingEmail && <Loader2 className="w-4 h-4 animate-spin" />}
-              {loadingEmail ? 'Signing in…' : 'Sign in'}
-            </Button>
-          </form>
+          <Card className="backdrop-blur-xl bg-card/90 border-border/60 shadow-xl shadow-black/8">
+            <CardHeader className="pb-3">
+              <CardTitle className="sr-only">Sign in</CardTitle>
+              <CardDescription className="sr-only">Enter your credentials to access your account</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-col gap-4">
+                <Button
+                  variant="outline"
+                  onClick={handleGoogle}
+                  disabled={busy}
+                  className="w-full"
+                >
+                  {loadingGoogle
+                    ? <Loader2 data-icon="inline-start" className="animate-spin" />
+                    : <span data-icon="inline-start"><GoogleIcon /></span>}
+                  {loadingGoogle ? 'Signing in…' : 'Continue with Google'}
+                </Button>
 
-          <p className="text-xs text-center text-muted-foreground">
-            Don't have an account?{' '}
-            <Link to="/signup" className="text-primary hover:underline font-medium">
-              Sign up
-            </Link>
-          </p>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <Separator />
+                  </div>
+                  <div className="relative flex justify-center text-xs uppercase">
+                    <span className="bg-card px-2 text-muted-foreground">or</span>
+                  </div>
+                </div>
+
+                <form onSubmit={handleEmail} className="flex flex-col gap-3">
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="email">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      required
+                      autoComplete="email"
+                      disabled={busy}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-2">
+                    <Label htmlFor="password">Password</Label>
+                    <div className="relative">
+                      <Input
+                        id="password"
+                        type={showPassword ? 'text' : 'password'}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        placeholder="••••••••"
+                        required
+                        autoComplete="current-password"
+                        disabled={busy}
+                        className="pr-10"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setShowPassword((v) => !v)}
+                        className="absolute right-0 top-0 size-9 text-muted-foreground hover:text-foreground"
+                        tabIndex={-1}
+                      >
+                        {showPassword ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+                      </Button>
+                    </div>
+                  </div>
+
+                  <Button type="submit" disabled={busy} className="w-full">
+                    {loadingEmail && <Loader2 data-icon="inline-start" className="animate-spin" />}
+                    {loadingEmail ? 'Signing in…' : 'Sign in'}
+                  </Button>
+                </form>
+
+                <p className="text-center text-xs text-muted-foreground">
+                  Don&apos;t have an account?{' '}
+                  <Link to="/signup" className="text-primary font-medium hover:underline underline-offset-4">
+                    Sign up
+                  </Link>
+                </p>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </motion.div>
     </AuroraBackground>
