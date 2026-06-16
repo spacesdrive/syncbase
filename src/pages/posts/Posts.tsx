@@ -7,6 +7,7 @@ import { PostCard } from './PostCard'
 import { NewPostModal } from './NewPostModal'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { FacetedFilter } from '../../components/ui/FacetedFilter'
+import { Button } from '../../components/ui/button'
 import { PLATFORMS, POST_STATUSES } from '../../lib/constants'
 
 export default function Posts() {
@@ -79,13 +80,13 @@ export default function Posts() {
     <div className="p-4 sm:p-6 max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <h2 className="section-title">Team Feed</h2>
-          <p className="section-subtitle mt-0.5">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
+          <h2 className="text-lg font-semibold tracking-tight">Team Feed</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">{posts.length} {posts.length === 1 ? 'post' : 'posts'}</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn-primary">
-          <Plus className="w-4 h-4" />
+        <Button size="sm" onClick={() => setShowModal(true)}>
+          <Plus data-icon="inline-start" />
           New Post
-        </button>
+        </Button>
       </div>
 
       <div className="flex items-center gap-2 mb-5 flex-wrap">
@@ -108,13 +109,15 @@ export default function Posts() {
           options={members.map((m: any) => ({ label: m.profiles?.name || 'Unknown', value: m.user_id, count: authorCounts[m.user_id] }))}
         />
         {activeFilters && (
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             onClick={() => setFilters({ platform: [], status: [], author_id: [] })}
-            className="flex h-8 items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+            className="h-8 px-2 text-xs text-muted-foreground"
           >
             Reset
-            <X className="w-3.5 h-3.5" />
-          </button>
+            <X className="size-3.5" />
+          </Button>
         )}
       </div>
 
@@ -124,14 +127,14 @@ export default function Posts() {
           title="No posts yet"
           description="Create your first post to get the team's content pipeline moving."
           action={
-            <button onClick={() => setShowModal(true)} className="btn-primary">
-              <Plus className="w-4 h-4" />
+            <Button onClick={() => setShowModal(true)}>
+              <Plus className="size-4" />
               Create first post
-            </button>
+            </Button>
           }
         />
       ) : (
-        <div className="space-y-4">
+        <div className="flex flex-col gap-4">
           {displayedPosts.map((post, i) => (
             <div key={post.id} className="animate-fade-up" style={{ animationDelay: `${i * 30}ms` }}>
               <PostCard post={post} onUpdate={handleUpdate} onDelete={handleDelete} />

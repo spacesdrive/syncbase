@@ -4,14 +4,16 @@ import { formatDistanceToNow, format } from 'date-fns'
 import { ThumbsUp, MessageSquare, PenLine, CheckCircle, Calendar, ChevronDown, ChevronUp, Trash2, Send, Download, Pencil } from 'lucide-react'
 import { Avatar } from '../../components/ui/UserAvatar'
 import { Badge } from '../../components/ui/badge'
-import { GlowingCard } from '../../components/aceternity/GlowingCard'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Card } from '../../components/ui/card'
 import { NewPostModal } from './NewPostModal'
 import { PLATFORMS, POST_STATUSES } from '../../lib/constants'
 import { PLATFORM_ICONS } from '../../components/icons/PlatformIcons'
 import { api } from '../../lib/api'
 import { useAuth } from '../../contexts/AuthContext'
 import { useTeam } from '../../contexts/TeamContext'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 export function PostCard({ post, onUpdate, onDelete }: {
   post: any
@@ -99,7 +101,7 @@ export function PostCard({ post, onUpdate, onDelete }: {
 
   return (
     <>
-      <GlowingCard className="p-5">
+      <Card className="p-5">
         <div className="flex items-start justify-between gap-3 mb-3.5">
           <div className="flex items-center gap-2.5">
             <Avatar name={post.profiles?.name} src={post.profiles?.avatar_url} size="sm" />
@@ -265,7 +267,7 @@ export function PostCard({ post, onUpdate, onDelete }: {
               transition={{ duration: 0.18 }}
               className="overflow-hidden"
             >
-              <div className="mt-3 space-y-2.5">
+              <div className="mt-3 flex flex-col gap-2.5">
                 {comments.map((c: any) => {
                   const isSuggestion = c.content.startsWith('[suggestion]:') || c.content.startsWith('✏️')
                   const displayContent = c.content.startsWith('[suggestion]:')
@@ -287,19 +289,19 @@ export function PostCard({ post, onUpdate, onDelete }: {
                   )
                 })}
                 <form onSubmit={submitComment} className="flex gap-2 mt-1">
-                  <input
+                  <Input
                     value={newComment}
                     onChange={(e) => setNewComment(e.target.value)}
                     placeholder="Add a comment…"
-                    className="input text-xs py-1.5"
+                    className="h-8 text-xs"
                   />
-                  <button type="submit" className="btn-primary text-xs px-3 py-1.5">Post</button>
+                  <Button type="submit" size="sm" className="shrink-0">Post</Button>
                 </form>
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </GlowingCard>
+      </Card>
 
       <NewPostModal
         open={showEditModal}
