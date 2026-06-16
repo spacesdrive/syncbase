@@ -39,10 +39,27 @@ function InfoTypeIcon({ name, className }: { name: string; className?: string })
   return <Icon className={className ?? 'w-4 h-4'} />
 }
 import { EmptyState } from '../../components/ui/EmptyState'
-import { Modal } from '../../components/ui/Modal'
 import { Avatar } from '../../components/ui/UserAvatar'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
+import { Textarea } from '../../components/ui/textarea'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select'
+import { Separator } from '../../components/ui/separator'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../../components/ui/dialog'
 import { cn } from '../../lib/utils'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 
 function parseDocContent(content: string | null): { url: string; filename: string | null; size: number | null } {
@@ -182,7 +199,7 @@ function InfoCardContent({
 
       case 'api_key':
         return (
-          <div className="mt-2 space-y-2">
+          <div className="mt-2 flex flex-col gap-2">
             {providerInfo && (
               <div className="flex items-center gap-1.5">
                 <span className="w-2 h-2 rounded-full shrink-0" style={{ backgroundColor: providerInfo.color }} />
@@ -587,17 +604,21 @@ function CreateInfoModal({
         return (
           <>
             <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Provider</label>
-              <select value={provider} onChange={(e) => setProvider(e.target.value)} className="input">
-                <option value="">Select provider…</option>
-                {API_PROVIDERS.map((p) => (
-                  <option key={p.id} value={p.id}>{p.label}</option>
-                ))}
-              </select>
+              <Label className="text-xs text-muted-foreground uppercase tracking-wide">Provider</Label>
+              <Select value={provider} onValueChange={setProvider}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select provider…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {API_PROVIDERS.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>{p.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">API Key</label>
-              <input type="password" value={content} onChange={(e) => setContent(e.target.value)} placeholder="sk-…" className="input font-mono" />
+              <Label className="text-xs text-muted-foreground uppercase tracking-wide">API Key</Label>
+              <Input type="password" value={content} onChange={(e) => setContent(e.target.value)} placeholder="sk-…" className="font-mono" />
             </div>
           </>
         )
@@ -605,8 +626,8 @@ function CreateInfoModal({
       case 'number':
         return (
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Value</label>
-            <input type="number" value={content} onChange={(e) => setContent(e.target.value)} placeholder="0" className="input" />
+            <Label className="text-xs text-muted-foreground uppercase tracking-wide">Value</Label>
+            <Input type="number" value={content} onChange={(e) => setContent(e.target.value)} placeholder="0" />
           </div>
         )
 
@@ -614,15 +635,15 @@ function CreateInfoModal({
       case 'claude_skill':
         return (
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">
+            <Label className="text-xs text-muted-foreground uppercase tracking-wide">
               {type === 'claude_skill' ? 'Instructions / Skill' : 'Prompt'}
-            </label>
-            <textarea
+            </Label>
+            <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder={type === 'claude_skill' ? 'You are a helpful assistant…' : 'Write a compelling post about…'}
               rows={5}
-              className="input resize-none font-mono text-xs"
+              className="resize-none font-mono text-xs"
             />
           </div>
         )
@@ -630,13 +651,13 @@ function CreateInfoModal({
       default:
         return (
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Content</label>
-            <textarea
+            <Label className="text-xs text-muted-foreground uppercase tracking-wide">Content</Label>
+            <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               placeholder="Notes, links, any text…"
               rows={4}
-              className="input resize-none"
+              className="resize-none"
             />
           </div>
         )
@@ -644,60 +665,73 @@ function CreateInfoModal({
   }
 
   return (
-    <Modal open={open} onClose={() => { reset(); onClose() }} title="New Info Box">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-xs font-medium text-muted-foreground mb-2 uppercase tracking-wide">Type</label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-            {INFO_TYPES.map((t) => (
-              <button
-                key={t.id}
-                type="button"
-                onClick={() => { setType(t.id); setContent(''); setProvider('') }}
-                className={cn(
-                  'flex flex-col items-center gap-1 p-2 rounded-xl border text-center transition-all',
-                  type === t.id
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-border'
-                )}
-              >
-                <InfoTypeIcon name={t.icon} className="w-4 h-4" />
-                <span className="text-[10px] font-medium leading-tight">{t.label}</span>
-              </button>
-            ))}
+    <Dialog open={open} onOpenChange={(v) => { if (!v) { reset(); onClose() } }}>
+      <DialogContent className="max-w-xl max-h-[88vh] flex flex-col gap-0 p-0">
+        <DialogHeader className="px-6 py-4 border-b border-border shrink-0">
+          <DialogTitle>New Info Box</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-6 py-5">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Type</Label>
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {INFO_TYPES.map((t) => (
+                  <button
+                    key={t.id}
+                    type="button"
+                    onClick={() => { setType(t.id); setContent(''); setProvider('') }}
+                    className={cn(
+                      'flex flex-col items-center gap-1 p-2 rounded-xl border text-center transition-all',
+                      type === t.id
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:border-border'
+                    )}
+                  >
+                    <InfoTypeIcon name={t.icon} className="w-4 h-4" />
+                    <span className="text-[10px] font-medium leading-tight">{t.label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="info-title">Title *</Label>
+              <Input id="info-title" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Groq API Key" required />
+            </div>
+
+            {renderContentField()}
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="info-note">Note</Label>
+              <Textarea id="info-note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional note…" rows={2} className="resize-none" />
+            </div>
+
+            {tasks.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <Label>Link to task (optional)</Label>
+                <Select value={taskId || '__none__'} onValueChange={(v) => setTaskId(v === '__none__' ? '' : v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="No task" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">No task</SelectItem>
+                    {tasks.map((t) => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <Separator />
+            <div className="flex justify-end gap-3">
+              <Button type="button" variant="outline" onClick={() => { reset(); onClose() }}>Cancel</Button>
+              <Button type="submit" disabled={saving || uploading}>
+                {saving ? 'Creating…' : 'Create'}
+              </Button>
+            </div>
           </div>
-        </div>
-
-        <div>
-          <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Title *</label>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="e.g. Groq API Key" className="input" required />
-        </div>
-
-        {renderContentField()}
-
-        <div>
-          <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Note</label>
-          <textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="Optional note…" rows={2} className="input resize-none" />
-        </div>
-
-        {tasks.length > 0 && (
-          <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Link to task (optional)</label>
-            <select value={taskId} onChange={(e) => setTaskId(e.target.value)} className="input">
-              <option value="">No task</option>
-              {tasks.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
-            </select>
-          </div>
-        )}
-
-        <div className="flex justify-end gap-3 pt-2">
-          <button type="button" onClick={() => { reset(); onClose() }} className="btn-secondary">Cancel</button>
-          <button type="submit" disabled={saving || uploading} className="btn-primary">
-            {saving ? 'Creating…' : 'Create'}
-          </button>
-        </div>
-      </form>
-    </Modal>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -825,25 +859,29 @@ function EditInfoModal({
         return (
           <>
             <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Provider</label>
-              <select value={provider} onChange={(e) => setProvider(e.target.value)} className="input">
-                <option value="">Select provider…</option>
-                {API_PROVIDERS.map((p) => (
-                  <option key={p.id} value={p.id}>{p.label}</option>
-                ))}
-              </select>
+              <Label className="text-xs text-muted-foreground uppercase tracking-wide">Provider</Label>
+              <Select value={provider} onValueChange={setProvider}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select provider…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {API_PROVIDERS.map((p) => (
+                    <SelectItem key={p.id} value={p.id}>{p.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">API Key</label>
-              <input type="password" value={content} onChange={(e) => setContent(e.target.value)} placeholder="sk-…" className="input font-mono" />
+              <Label className="text-xs text-muted-foreground uppercase tracking-wide">API Key</Label>
+              <Input type="password" value={content} onChange={(e) => setContent(e.target.value)} placeholder="sk-…" className="font-mono" />
             </div>
           </>
         )
       case 'number':
         return (
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Value</label>
-            <input type="number" value={content} onChange={(e) => setContent(e.target.value)} placeholder="0" className="input" />
+            <Label className="text-xs text-muted-foreground uppercase tracking-wide">Value</Label>
+            <Input type="number" value={content} onChange={(e) => setContent(e.target.value)} placeholder="0" />
           </div>
         )
       case 'prompt':
@@ -857,19 +895,19 @@ function EditInfoModal({
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={5}
-              className="input resize-none font-mono text-xs"
+              className="resize-none font-mono text-xs"
             />
           </div>
         )
       default:
         return (
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Content</label>
-            <textarea
+            <Label className="text-xs text-muted-foreground uppercase tracking-wide">Content</Label>
+            <Textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={4}
-              className="input resize-none"
+              className="resize-none"
             />
           </div>
         )
@@ -877,38 +915,51 @@ function EditInfoModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} title="Edit Info Box">
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Title *</label>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} className="input" required />
-        </div>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose() }}>
+      <DialogContent className="max-w-xl max-h-[88vh] flex flex-col gap-0 p-0">
+        <DialogHeader className="px-6 py-4 border-b border-border shrink-0">
+          <DialogTitle>Edit Info Box</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-6 py-5">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="edit-info-title">Title *</Label>
+              <Input id="edit-info-title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+            </div>
 
-        {renderContentField()}
+            {renderContentField()}
 
-        <div>
-          <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Note</label>
-          <textarea value={note} onChange={(e) => setNote(e.target.value)} rows={2} className="input resize-none" />
-        </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="edit-info-note">Note</Label>
+              <Textarea id="edit-info-note" value={note} onChange={(e) => setNote(e.target.value)} rows={2} className="resize-none" />
+            </div>
 
-        {tasks.length > 0 && (
-          <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5 uppercase tracking-wide">Link to task (optional)</label>
-            <select value={taskId} onChange={(e) => setTaskId(e.target.value)} className="input">
-              <option value="">No task</option>
-              {tasks.map((t) => <option key={t.id} value={t.id}>{t.title}</option>)}
-            </select>
+            {tasks.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <Label>Link to task (optional)</Label>
+                <Select value={taskId || '__none__'} onValueChange={(v) => setTaskId(v === '__none__' ? '' : v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="No task" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">No task</SelectItem>
+                    {tasks.map((t) => <SelectItem key={t.id} value={t.id}>{t.title}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
+
+            <Separator />
+            <div className="flex justify-end gap-3">
+              <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+              <Button type="submit" disabled={saving || uploading}>
+                {saving ? 'Saving…' : 'Save changes'}
+              </Button>
+            </div>
           </div>
-        )}
-
-        <div className="flex justify-end gap-3 pt-2">
-          <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-          <button type="submit" disabled={saving || uploading} className="btn-primary">
-            {saving ? 'Saving…' : 'Save changes'}
-          </button>
-        </div>
-      </form>
-    </Modal>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 
@@ -992,25 +1043,24 @@ export default function InfoPage() {
     <div className="p-4 sm:p-6">
       <div className="flex items-start justify-between mb-5 gap-3">
         <div>
-          <h2 className="section-title">Info</h2>
-          <p className="section-subtitle">Team knowledge base — API keys, prompts, docs and media</p>
+          <h2 className="text-lg font-semibold tracking-tight">Info</h2>
+          <p className="text-sm text-muted-foreground">Team knowledge base — API keys, prompts, docs and media</p>
         </div>
-        <button onClick={() => setShowModal(true)} className="btn-primary shrink-0">
-          <Plus className="w-4 h-4" />
+        <Button onClick={() => setShowModal(true)} size="sm" className="shrink-0">
+          <Plus data-icon="inline-start" />
           New Box
-        </button>
+        </Button>
       </div>
 
       <div className="flex items-center gap-3 mb-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
-          <input
+          <Input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search info boxes…"
-            className="input pr-8 h-9"
-            style={{ paddingLeft: '2.25rem' }}
+            className="pr-8 pl-9"
           />
           {search && (
             <button
@@ -1057,10 +1107,10 @@ export default function InfoPage() {
           title="No info boxes yet"
           description="Store API keys, prompts, notes, and other team knowledge here."
           action={
-            <button onClick={() => setShowModal(true)} className="btn-primary">
-              <Plus className="w-4 h-4" />
+            <Button onClick={() => setShowModal(true)}>
+              <Plus data-icon="inline-start" />
               Create first box
-            </button>
+            </Button>
           }
         />
       ) : (

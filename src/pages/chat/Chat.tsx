@@ -14,12 +14,13 @@ import {
   AlertDialogTitle, AlertDialogTrigger,
 } from '../../components/ui/alert-dialog'
 import { cn } from '../../lib/utils'
+import { Button } from '../../components/ui/button'
 import {
   Send, Paperclip, Hash, Download, X, Loader2, Trash2,
   MessagesSquare, Edit, Search, ArrowLeft, Users, Pencil, SmilePlus,
 } from 'lucide-react'
 import { format, isToday, isYesterday, parseISO } from 'date-fns'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 const CHAT_REACTIONS = ['👍', '❤️', '😂', '😮', '🔥', '✅']
 
@@ -189,14 +190,13 @@ function ComposeModal({ members, onClose, onSent }: {
             {uploadingFile ? <Loader2 className="w-4 h-4 animate-spin" /> : <Paperclip className="w-4 h-4" />}
           </button>
           <input ref={fileRef} type="file" className="hidden" onChange={handleFileSelect} />
-          <button
+          <Button
             onClick={handleSend}
             disabled={sending || (!text.trim() && !pendingFile) || selected.length === 0}
-            className="btn-primary disabled:opacity-40"
           >
-            {sending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            {sending ? <Loader2 data-icon="inline-start" className="animate-spin" /> : <Send data-icon="inline-start" />}
             Send{selected.length > 1 ? ` to ${selected.length}` : ''}
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -853,13 +853,13 @@ export default function Chat() {
                   }
                 </button>
               </div>
-              <button
+              <Button
                 type="submit"
                 disabled={sending || (!text.trim() && !pendingFile)}
-                className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-md sm:hidden disabled:opacity-40"
+                className="sm:hidden"
               >
-                <Send size={18} /> Send
-              </button>
+                <Send data-icon="inline-start" size={18} /> Send
+              </Button>
             </form>
           </div>
         </div>
@@ -869,23 +869,22 @@ export default function Chat() {
           'absolute inset-0 start-full z-50 hidden w-full flex-1 flex-col justify-center rounded-md border bg-card shadow-xs',
           'sm:static sm:z-auto sm:flex'
         )}>
-          <div className="flex flex-col items-center space-y-6">
+          <div className="flex flex-col items-center gap-6">
             <div className="flex size-16 items-center justify-center rounded-full border-2 border-border">
               <MessagesSquare className="size-8" />
             </div>
-            <div className="space-y-2 text-center">
+            <div className="flex flex-col gap-2 text-center">
               <h1 className="text-xl font-semibold">Your messages</h1>
               <p className="text-sm text-muted-foreground">Send a message to start a chat.</p>
             </div>
-            <button
+            <Button
               onClick={() => {
                 if (otherMembers.length > 0) selectConv(otherMembers[0].user_id)
                 else selectConv('team')
               }}
-              className="btn-primary"
             >
               Send message
-            </button>
+            </Button>
           </div>
         </div>
       )}
