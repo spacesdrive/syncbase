@@ -2,7 +2,7 @@ import { useLocation } from 'react-router-dom'
 import { AppSidebar } from './Sidebar'
 import { TopBar } from './TopBar'
 import { SidebarInset, SidebarProvider } from '../ui/sidebar'
-import { type ReactNode } from 'react'
+import type { CSSProperties, ReactNode } from 'react'
 
 const TITLES: Record<string, string> = {
   '/posts':    'Posts',
@@ -38,7 +38,13 @@ export function Layout({ children }: LayoutProps) {
     ?? 'Syncbase'
 
   return (
-    <SidebarProvider defaultOpen={getDefaultOpen()}>
+    <SidebarProvider
+      defaultOpen={getDefaultOpen()}
+      style={{
+        '--sidebar-width': 'calc(var(--spacing) * 60)',
+        '--header-height': 'calc(var(--spacing) * 12)',
+      } as CSSProperties}
+    >
       <AppSidebar />
       <SidebarInset>
         <TopBar title={title} />
