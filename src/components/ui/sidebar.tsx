@@ -1,4 +1,4 @@
-import { createContext, forwardRef, useCallback, useContext, useEffect, useMemo, useState, type ReactNode, type CSSProperties } from 'react'
+import { createContext, forwardRef, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode, type CSSProperties } from 'react'
 import { Slot } from '@radix-ui/react-slot'
 import { cva, type VariantProps } from 'class-variance-authority'
 import { PanelLeftIcon } from 'lucide-react'
@@ -49,6 +49,7 @@ function SidebarProvider({
   const [openMobile, setOpenMobile] = useState(false)
   const [_open, _setOpen] = useState(defaultOpen)
   const open = openProp ?? _open
+  const wrapperRef = useRef<HTMLDivElement | null>(null)
 
   const setOpen = useCallback((value: boolean | ((v: boolean) => boolean)) => {
     const openState = typeof value === 'function' ? value(open) : value
@@ -61,8 +62,17 @@ function SidebarProvider({
   }, [setOpenProp, open])
 
   const toggleSidebar = useCallback(() => {
-    return isMobile ? setOpenMobile((o) => !o) : setOpen((o) => !o)
-  }, [isMobile, setOpen])
+    if (isMobile) { setOpenMobile(o => !o); return }
+    const newOpen = !open
+    // Apply DOM attribute before setState so the CSS transition starts this frame,
+    // not after React finishes re-rendering all sidebar context consumers.
+    const sidebarEl = wrapperRef.current?.querySelector('[data-slot="sidebar"]:not([data-mobile])') as HTMLElement | null
+    if (sidebarEl) {
+      sidebarEl.setAttribute('data-state', newOpen ? 'expanded' : 'collapsed')
+      sidebarEl.setAttribute('data-collapsible', newOpen ? '' : 'icon')
+    }
+    setOpen(newOpen)
+  }, [isMobile, open, setOpen])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -91,6 +101,7 @@ function SidebarProvider({
     <SidebarContext.Provider value={contextValue}>
       <TooltipProvider delayDuration={0}>
         <div
+          ref={wrapperRef}
           data-slot="sidebar-wrapper"
           style={{ '--sidebar-width': '16rem', '--sidebar-width-icon': '3rem', ...style } as CSSProperties}
           className={cn('group/sidebar-wrapper flex h-svh w-full overflow-hidden', className)}
@@ -160,7 +171,7 @@ function Sidebar({
     <div
       className={cn(
         'group peer relative hidden md:flex flex-col h-full shrink-0 overflow-hidden',
-        'bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-linear',
+        'bg-sidebar text-sidebar-foreground transition-[width] duration-200 ease-in-out',
         variant === 'sidebar' && 'border-r border-sidebar-border',
         'w-[--sidebar-width]',
         collapsible === 'icon' && 'data-[state=collapsed]:w-[--sidebar-width-icon]',
@@ -298,7 +309,7 @@ function SidebarGroupLabel({
       data-sidebar="group-label"
       className={cn(
         'flex h-8 shrink-0 items-center rounded-md px-2 text-xs font-medium text-sidebar-foreground/70',
-        'ring-sidebar-ring outline-none transition-[margin,opacity] duration-200 ease-linear',
+        'ring-sidebar-ring outline-none transition-[margin,opacity] duration-200 ease-in-out',
         'focus-visible:ring-2',
         'group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0',
         '[&>svg]:size-4 [&>svg]:shrink-0',
@@ -334,7 +345,7 @@ function SidebarMenuItem({ className, ...props }: React.HTMLAttributes<HTMLLIEle
 const sidebarMenuButtonVariants = cva(
   [
     'peer/menu-button flex w-full items-center gap-2 overflow-hidden rounded-md p-2 text-left text-sm',
-    'outline-none ring-sidebar-ring transition-[width,height,padding] duration-150',
+    'outline-none ring-sidebar-ring transition-colors duration-150',
     'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
     'focus-visible:ring-2',
     'active:bg-sidebar-accent active:text-sidebar-accent-foreground',
