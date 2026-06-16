@@ -1,11 +1,28 @@
 import { useState, useEffect } from 'react'
-import { Modal } from '../../components/ui/Modal'
-import { HeroDatePickerField } from '../../components/ui/HeroDatePicker'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '../../components/ui/dialog'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Label } from '../../components/ui/label'
+import { Textarea } from '../../components/ui/textarea'
+import { Checkbox } from '../../components/ui/checkbox'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select'
+import { Separator } from '../../components/ui/separator'
 import { TASK_PRIORITIES } from '../../lib/constants'
 import { CREATOR_STATUS_OPTIONS } from '../../lib/taskStatusRules'
 import { api } from '../../lib/api'
 import { useTeam } from '../../contexts/TeamContext'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 function useProjects(teamId: string | undefined) {
   const [projects, setProjects] = useState<any[]>([])
@@ -143,10 +160,10 @@ export function NewTaskModal({
 
       let savedTask: any
       if (isEditing) {
-        const { task: updated } = await api.updateTask(team.id, task.id, payload)
+        const { task: updated } = await api.updateTask(team!.id, task.id, payload)
         savedTask = updated
       } else {
-        const { task: created } = await api.createTask(team.id, payload)
+        const { task: created } = await api.createTask(team!.id, payload)
         savedTask = created
       }
 
@@ -163,7 +180,7 @@ export function NewTaskModal({
           task.id,
           `↩ Reopened by ${members.find((m) => m.user_id === savedTask.created_by)?.profiles?.name || 'creator'}: ${form.reopen_note.trim()}`
         )
-        const { task: refreshed } = await api.updateTask(team.id, task.id, {})
+        const { task: refreshed } = await api.updateTask(team!.id, task.id, {})
         savedTask = refreshed
       }
 
@@ -186,162 +203,181 @@ export function NewTaskModal({
   }
 
   return (
-    <Modal open={open} onClose={onClose} title={title || (isEditing ? 'Edit Ticket' : 'New Task')}>
-      <form onSubmit={handleSubmit} className="space-y-4">
+    <Dialog open={open} onOpenChange={(v) => { if (!v) onClose() }}>
+      <DialogContent className="max-w-xl max-h-[88vh] flex flex-col gap-0 p-0">
+        <DialogHeader className="px-6 py-4 border-b border-border shrink-0">
+          <DialogTitle className="text-[15px] tracking-tight">
+            {title || (isEditing ? 'Edit Ticket' : 'New Task')}
+          </DialogTitle>
+        </DialogHeader>
 
-        <div>
-          <label className="form-label">Task name *</label>
-          <input
-            value={form.title}
-            onChange={(e) => set('title', e.target.value)}
-            placeholder="e.g. Write LinkedIn post copy"
-            className="input"
-            required
-          />
-        </div>
+        <form onSubmit={handleSubmit} className="overflow-y-auto flex-1 px-6 py-5">
+          <div className="flex flex-col gap-4">
 
-        <div>
-          <label className="form-label">Description</label>
-          <textarea
-            value={form.description}
-            onChange={(e) => set('description', e.target.value)}
-            placeholder="Optional details…"
-            rows={3}
-            className="input resize-none"
-          />
-        </div>
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="task-title">Task name *</Label>
+              <Input
+                id="task-title"
+                value={form.title}
+                onChange={(e) => set('title', e.target.value)}
+                placeholder="e.g. Write LinkedIn post copy"
+                required
+              />
+            </div>
 
-        <div className="grid grid-cols-2 gap-3">
-          <div>
-            <label className="form-label">Assign to</label>
-            {!form.use_multi_assignees ? (
-              <select
-                value={form.assignee_id}
-                onChange={(e) => set('assignee_id', e.target.value)}
-                className="input"
-              >
-                <option value="">Unassigned</option>
-                {members.map((m) => (
-                  <option key={m.user_id} value={m.user_id}>{m.profiles?.name}</option>
-                ))}
-              </select>
-            ) : (
-              <div className="rounded-lg border border-border bg-muted/40 p-3 space-y-2 max-h-44 overflow-y-auto">
-                {members.map((m) => {
-                  const checked = form.assignee_ids.includes(m.user_id)
-                  return (
-                    <label key={m.user_id} className="flex items-center gap-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={checked}
-                        onChange={() => toggleAssignee(m.user_id)}
-                        className="rounded border-border text-primary focus:ring-primary"
-                      />
-                      <span className="text-sm text-foreground">{m.profiles?.name}</span>
-                    </label>
-                  )
-                })}
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="task-desc">Description</Label>
+              <Textarea
+                id="task-desc"
+                value={form.description}
+                onChange={(e) => set('description', e.target.value)}
+                placeholder="Optional details…"
+                rows={3}
+                className="resize-none"
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-2">
+                <Label>Assign to</Label>
+                {!form.use_multi_assignees ? (
+                  <Select value={form.assignee_id || '__none__'} onValueChange={(v) => set('assignee_id', v === '__none__' ? '' : v)}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Unassigned" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="__none__">Unassigned</SelectItem>
+                      {members.map((m) => (
+                        <SelectItem key={m.user_id} value={m.user_id}>{m.profiles?.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <div className="rounded-lg border border-border bg-muted/40 p-3 flex flex-col gap-2 max-h-44 overflow-y-auto">
+                    {members.map((m) => {
+                      const checked = form.assignee_ids.includes(m.user_id)
+                      return (
+                        <label key={m.user_id} className="flex items-center gap-3 cursor-pointer">
+                          <Checkbox
+                            checked={checked}
+                            onCheckedChange={() => toggleAssignee(m.user_id)}
+                          />
+                          <span className="text-sm text-foreground">{m.profiles?.name}</span>
+                        </label>
+                      )
+                    })}
+                  </div>
+                )}
+                <Button
+                  type="button"
+                  variant="link"
+                  size="sm"
+                  onClick={() => toggleMultiAssign(!form.use_multi_assignees)}
+                  className="h-auto p-0 text-xs justify-start"
+                >
+                  {form.use_multi_assignees ? 'Use single assignee' : 'Assign to multiple people'}
+                </Button>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label>Priority</Label>
+                <Select value={form.priority} onValueChange={(v) => set('priority', v)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {TASK_PRIORITIES.map((p) => (
+                      <SelectItem key={p.id} value={p.id}>{p.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label>Status</Label>
+                <Select value={form.status} onValueChange={(v) => set('status', v)}>
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CREATOR_STATUS_OPTIONS.map((o) => (
+                      <SelectItem key={o.value} value={o.status}>{o.label}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex flex-col gap-2">
+                <Label>Due date</Label>
+                <Input
+                  type="date"
+                  value={form.due_date}
+                  onChange={(e) => set('due_date', e.target.value)}
+                  className="[color-scheme:light] dark:[color-scheme:dark]"
+                />
+              </div>
+            </div>
+
+            {reopenedFromCouldntDo && (
+              <div className="flex flex-col gap-2">
+                <Label htmlFor="reopen-note">Reopen reason *</Label>
+                <Textarea
+                  id="reopen-note"
+                  value={form.reopen_note}
+                  onChange={(e) => set('reopen_note', e.target.value)}
+                  placeholder="Why are you reopening or reassigning this ticket?"
+                  rows={3}
+                  className="resize-none"
+                  required
+                />
               </div>
             )}
-            <button
-              type="button"
-              onClick={() => toggleMultiAssign(!form.use_multi_assignees)}
-              className="mt-1.5 text-xs text-primary hover:underline"
-            >
-              {form.use_multi_assignees ? 'Use single assignee' : 'Assign to multiple people'}
-            </button>
-          </div>
 
-          <div>
-            <label className="form-label">Priority</label>
-            <select
-              value={form.priority}
-              onChange={(e) => set('priority', e.target.value)}
-              className="input"
-            >
-              {TASK_PRIORITIES.map((p) => <option key={p.id} value={p.id}>{p.label}</option>)}
-            </select>
-          </div>
+            <div className="flex flex-col gap-2">
+              <Label>Visibility</Label>
+              <div className="flex gap-2">
+                {[{ id: 'team', label: 'Team' }, { id: 'private', label: 'Only me' }].map((v) => (
+                  <Button
+                    key={v.id}
+                    type="button"
+                    variant={form.visibility === v.id ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => set('visibility', v.id)}
+                    className="flex-1"
+                  >
+                    {v.label}
+                  </Button>
+                ))}
+              </div>
+            </div>
 
-          <div>
-            <label className="form-label">Status</label>
-            <select
-              value={form.status}
-              onChange={(e) => set('status', e.target.value)}
-              className="input"
-            >
-              {CREATOR_STATUS_OPTIONS.map((o) => (
-                <option key={o.value} value={o.status}>{o.label}</option>
-              ))}
-            </select>
-          </div>
+            {projects.length > 0 && (
+              <div className="flex flex-col gap-2">
+                <Label>Link to project</Label>
+                <Select value={form.project_id || '__none__'} onValueChange={(v) => set('project_id', v === '__none__' ? '' : v)}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="No project" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="__none__">No project</SelectItem>
+                    {projects.map((p: any) => (
+                      <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+            )}
 
-          <div>
-            <label className="form-label">Due date</label>
-            <HeroDatePickerField
-              value={form.due_date}
-              onChange={(v) => set('due_date', v)}
-            />
+            <Separator />
+            <div className="flex justify-end gap-2">
+              <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
+              <Button type="submit" disabled={saving}>
+                {saving ? (isEditing ? 'Saving…' : 'Creating…') : (isEditing ? 'Save Ticket' : 'Create Task')}
+              </Button>
+            </div>
           </div>
-        </div>
-
-        {reopenedFromCouldntDo && (
-          <div>
-            <label className="form-label">Reopen reason *</label>
-            <textarea
-              value={form.reopen_note}
-              onChange={(e) => set('reopen_note', e.target.value)}
-              placeholder="Why are you reopening or reassigning this ticket?"
-              rows={3}
-              className="input resize-none"
-              required
-            />
-          </div>
-        )}
-
-        <div>
-          <label className="form-label">Visibility</label>
-          <div className="flex gap-2">
-            {[{ id: 'team', label: 'Team' }, { id: 'private', label: 'Only me' }].map((v) => (
-              <button
-                key={v.id}
-                type="button"
-                onClick={() => set('visibility', v.id)}
-                className={`flex-1 py-2 rounded-lg text-sm font-medium border transition-all ${
-                  form.visibility === v.id
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-border/80'
-                }`}
-              >
-                {v.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {projects.length > 0 && (
-          <div>
-            <label className="form-label">Link to project</label>
-            <select
-              value={form.project_id}
-              onChange={(e) => set('project_id', e.target.value)}
-              className="input"
-            >
-              <option value="">No project</option>
-              {projects.map((p: any) => (
-                <option key={p.id} value={p.id}>{p.name}</option>
-              ))}
-            </select>
-          </div>
-        )}
-
-        <div className="flex justify-end gap-2 pt-1 border-t border-border">
-          <button type="button" onClick={onClose} className="btn-secondary">Cancel</button>
-          <button type="submit" disabled={saving} className="btn-primary">
-            {saving ? (isEditing ? 'Saving…' : 'Creating…') : (isEditing ? 'Save Ticket' : 'Create Task')}
-          </button>
-        </div>
-      </form>
-    </Modal>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
