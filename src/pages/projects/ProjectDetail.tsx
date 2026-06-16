@@ -8,13 +8,16 @@ import { SortableTaskList } from '../work/SortableTaskList'
 import { NewProjectModal } from './NewProjectModal'
 import { NewTaskModal } from '../work/NewTaskModal'
 import { ProjectGoals } from './ProjectGoals'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
+import { Button } from '../../components/ui/button'
+import { Badge } from '../../components/ui/badge'
+import { Skeleton } from '../../components/ui/skeleton'
 
-const STATUS_STYLES: Record<string, string> = {
-  planning:  'bg-violet-50 text-violet-700 border-violet-200 dark:bg-violet-900/20 dark:text-violet-400 dark:border-violet-800',
-  active:    'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800',
-  on_hold:   'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800',
-  completed: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800',
+const STATUS_VARIANTS: Record<string, 'default' | 'secondary' | 'outline'> = {
+  planning:  'secondary',
+  active:    'default',
+  on_hold:   'outline',
+  completed: 'secondary',
 }
 
 const STATUS_LABELS: Record<string, string> = {
@@ -77,72 +80,74 @@ export default function ProjectDetail() {
 
   if (loading) {
     return (
-      <div className="page-container-mobile">
-        <div className="skeleton h-6 w-48 mb-2 rounded" />
-        <div className="skeleton h-4 w-64 rounded" />
+      <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+        <Skeleton className="h-6 w-48 mb-2" />
+        <Skeleton className="h-4 w-64" />
       </div>
     )
   }
 
   if (!project) {
     return (
-      <div className="page-container-mobile">
+      <div className="p-4 sm:p-6 max-w-6xl mx-auto">
         <p className="text-muted-foreground text-sm">Project not found.</p>
       </div>
     )
   }
 
   return (
-    <div className="page-container-mobile">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       <div className="mb-6">
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => navigate('/projects')}
-          className="mb-4 flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
+          className="mb-4 -ml-2 text-muted-foreground"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft data-icon="inline-start" className="size-4" />
           All Projects
-        </button>
+        </Button>
 
         <div className="flex items-start justify-between gap-4">
           <div>
             <div className="flex items-center gap-3 flex-wrap">
-              <h2 className="section-title">{project.name}</h2>
-              <span className={`badge border text-[11px] ${STATUS_STYLES[project.status] || STATUS_STYLES.active}`}>
+              <h2 className="text-lg font-semibold tracking-tight">{project.name}</h2>
+              <Badge variant={STATUS_VARIANTS[project.status] ?? 'secondary'}>
                 {STATUS_LABELS[project.status] || project.status}
-              </span>
+              </Badge>
             </div>
             {project.description && (
-              <p className="section-subtitle mt-1">{project.description}</p>
+              <p className="text-sm text-muted-foreground mt-1">{project.description}</p>
             )}
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <button onClick={() => setShowEditProject(true)} className="btn-secondary">
-              <Pencil className="w-4 h-4" />
+            <Button variant="outline" size="sm" onClick={() => setShowEditProject(true)}>
+              <Pencil data-icon="inline-start" className="size-4" />
               Edit
-            </button>
-            <button onClick={() => setShowNewTask(true)} className="btn-primary">
-              <Plus className="w-4 h-4" />
+            </Button>
+            <Button size="sm" onClick={() => setShowNewTask(true)}>
+              <Plus data-icon="inline-start" className="size-4" />
               New Task
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {tasks.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-muted">
-            <CheckSquare className="w-6 h-6 text-muted-foreground" />
+          <div className="mb-3 flex size-12 items-center justify-center rounded-full bg-muted">
+            <CheckSquare className="size-6 text-muted-foreground" />
           </div>
-          <p className="text-sm font-medium text-foreground">No tasks yet</p>
+          <p className="text-sm font-medium">No tasks yet</p>
           <p className="mt-1 text-xs text-muted-foreground">Create the first task for this project.</p>
-          <button onClick={() => setShowNewTask(true)} className="btn-primary mt-4">
-            <Plus className="w-4 h-4" />
+          <Button size="sm" onClick={() => setShowNewTask(true)} className="mt-4">
+            <Plus data-icon="inline-start" className="size-4" />
             Create task
-          </button>
+          </Button>
         </div>
       ) : (
-        <div className="space-y-3">
-          <p className="section-subtitle">{tasks.length} {tasks.length === 1 ? 'task' : 'tasks'} · drag to reorder</p>
+        <div className="flex flex-col gap-3">
+          <p className="text-sm text-muted-foreground">{tasks.length} {tasks.length === 1 ? 'task' : 'tasks'} · drag to reorder</p>
           <SortableTaskList tasks={tasks} onUpdate={handleTaskUpdate} onDelete={handleTaskDelete} onReorder={handleReorder} />
         </div>
       )}

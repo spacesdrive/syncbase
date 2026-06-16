@@ -1,23 +1,29 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Plus, Target, Trash2, Pencil, X, ChevronUp, ChevronDown, Calendar, ArrowUp, ArrowDown, Check } from 'lucide-react'
+import { Plus, Target, Trash2, Pencil, X, ChevronUp, ChevronDown, Calendar, ArrowUp, ArrowDown, Check, Loader2 } from 'lucide-react'
 import { api } from '../../lib/api'
 import { cn } from '../../lib/utils'
 import { format } from 'date-fns'
-import toast from 'react-hot-toast'
-import { HeroDatePickerField } from '../../components/ui/HeroDatePicker'
+import { toast } from 'sonner'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Textarea } from '../../components/ui/textarea'
+import { Label } from '../../components/ui/label'
+import { Badge } from '../../components/ui/badge'
+import { Card, CardContent } from '../../components/ui/card'
+import { Progress } from '../../components/ui/progress'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select'
 
-const STATUS_CONFIG: Record<string, { label: string; className: string }> = {
-  active:    { label: 'Active',    className: 'bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-900/20 dark:text-emerald-400 dark:border-emerald-800' },
-  completed: { label: 'Completed', className: 'bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-900/20 dark:text-blue-400 dark:border-blue-800' },
-  on_hold:   { label: 'On Hold',   className: 'bg-amber-50 text-amber-700 border-amber-200 dark:bg-amber-900/20 dark:text-amber-400 dark:border-amber-800' },
-  cancelled: { label: 'Cancelled', className: 'bg-muted text-muted-foreground border-border' },
-}
-
-function progressBarColor(p: number) {
-  if (p >= 100) return 'bg-blue-500'
-  if (p >= 60)  return 'bg-emerald-500'
-  if (p >= 30)  return 'bg-amber-500'
-  return 'bg-rose-400'
+const STATUS_CONFIG: Record<string, { label: string; variant: 'default' | 'secondary' | 'outline' | 'destructive' }> = {
+  active:    { label: 'Active',    variant: 'default' },
+  completed: { label: 'Completed', variant: 'secondary' },
+  on_hold:   { label: 'On Hold',   variant: 'outline' },
+  cancelled: { label: 'Cancelled', variant: 'outline' },
 }
 
 interface GoalForm {
@@ -73,14 +79,14 @@ function GoalCard({ goal, onUpdate, onDelete, onEdit, reorderMode, onMoveUp, onM
   }
 
   return (
-    <div className="card p-4">
+    <Card className="p-4">
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1.5">
-            <span className={cn('badge border text-[11px]', status.className)}>{status.label}</span>
+            <Badge variant={status.variant}>{status.label}</Badge>
             {goal.deadline && (
               <span className={cn('flex items-center gap-1 text-[11px]', isOverdue ? 'text-destructive' : 'text-muted-foreground')}>
-                <Calendar className="w-3 h-3" />
+                <Calendar className="size-3" />
                 {format(new Date(goal.deadline), 'MMM d, yyyy')}
               </span>
             )}
@@ -95,76 +101,52 @@ function GoalCard({ goal, onUpdate, onDelete, onEdit, reorderMode, onMoveUp, onM
         <div className="flex items-center gap-0.5 shrink-0">
           {reorderMode ? (
             <>
-              <button
-                onClick={onMoveUp}
-                disabled={isFirst}
-                className="p-1 text-muted-foreground hover:text-foreground rounded transition-colors disabled:opacity-30"
-                title="Move up"
-              >
-                <ArrowUp className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={onMoveDown}
-                disabled={isLast}
-                className="p-1 text-muted-foreground hover:text-foreground rounded transition-colors disabled:opacity-30"
-                title="Move down"
-              >
-                <ArrowDown className="w-3.5 h-3.5" />
-              </button>
+              <Button variant="ghost" size="icon" className="size-7" onClick={onMoveUp} disabled={isFirst} title="Move up">
+                <ArrowUp className="size-3.5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="size-7" onClick={onMoveDown} disabled={isLast} title="Move down">
+                <ArrowDown className="size-3.5" />
+              </Button>
             </>
           ) : (
             <>
-              <button
-                onClick={() => onEdit(goal)}
-                className="p-1 text-muted-foreground hover:text-foreground rounded transition-colors"
-                title="Edit goal"
-              >
-                <Pencil className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={handleDelete}
-                className="p-1 text-muted-foreground hover:text-destructive rounded transition-colors"
-                title="Delete goal"
-              >
-                <Trash2 className="w-3.5 h-3.5" />
-              </button>
+              <Button variant="ghost" size="icon" className="size-7 text-muted-foreground hover:text-foreground" onClick={() => onEdit(goal)} title="Edit goal">
+                <Pencil className="size-3.5" />
+              </Button>
+              <Button variant="ghost" size="icon" className="size-7 text-muted-foreground hover:text-destructive" onClick={handleDelete} title="Delete goal">
+                <Trash2 className="size-3.5" />
+              </Button>
             </>
           )}
         </div>
       </div>
 
-      {/* Progress */}
       <div className="mt-3">
         <div className="flex items-center justify-between mb-1.5">
           <span className="text-xs text-muted-foreground">Progress</span>
           <div className="flex items-center gap-0.5">
-            <button
+            <Button
+              variant="ghost" size="icon" className="size-6"
               onClick={() => adjustProgress(-10)}
               disabled={updating || progress <= 0}
-              className="p-0.5 rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30 transition-colors"
               title="-10%"
             >
-              <ChevronDown className="w-4 h-4" />
-            </button>
+              <ChevronDown className="size-4" />
+            </Button>
             <span className="text-xs font-semibold w-9 text-center tabular-nums">{progress}%</span>
-            <button
+            <Button
+              variant="ghost" size="icon" className="size-6"
               onClick={() => adjustProgress(10)}
               disabled={updating || progress >= 100}
-              className="p-0.5 rounded text-muted-foreground hover:text-foreground hover:bg-muted disabled:opacity-30 transition-colors"
               title="+10%"
             >
-              <ChevronUp className="w-4 h-4" />
-            </button>
+              <ChevronUp className="size-4" />
+            </Button>
           </div>
         </div>
-        <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-          <div
-            className={cn('h-full rounded-full transition-all duration-300', progressBarColor(progress))}
-            style={{ width: `${progress}%` }}
-          />
-        </div>
+        <Progress value={progress} className="h-1.5" />
       </div>
-    </div>
+    </Card>
   )
 }
 
@@ -276,10 +258,9 @@ export function ProjectGoals({ projectId, teamId }: { projectId: string; teamId:
 
   return (
     <div className="mt-8 pt-6 border-t border-border">
-      {/* Section header */}
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Target className="w-4 h-4 text-muted-foreground" />
+          <Target className="size-4 text-muted-foreground" />
           <h3 className="text-sm font-semibold">Goals</h3>
           {goals.length > 0 && (
             <span className="text-xs text-muted-foreground">
@@ -290,123 +271,122 @@ export function ProjectGoals({ projectId, teamId }: { projectId: string; teamId:
         <div className="flex items-center gap-1.5">
           {goals.length > 1 && (
             reorderMode ? (
-              <button
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 px-2.5 text-xs text-emerald-600 border-emerald-300 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-800 dark:hover:bg-emerald-900/20"
                 onClick={saveOrder}
                 disabled={savingOrder}
-                className="btn-secondary h-7 px-2.5 text-xs text-emerald-600 border-emerald-300 hover:bg-emerald-50 dark:text-emerald-400 dark:border-emerald-800 dark:hover:bg-emerald-900/20"
               >
-                <Check className="w-3 h-3" />
+                {savingOrder ? <Loader2 data-icon="inline-start" className="animate-spin size-3" /> : <Check data-icon="inline-start" className="size-3" />}
                 {savingOrder ? 'Saving…' : 'Done'}
-              </button>
+              </Button>
             ) : (
-              <button onClick={() => setReorderMode(true)} className="btn-secondary h-7 px-2.5 text-xs">
+              <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs" onClick={() => setReorderMode(true)}>
                 Reorder
-              </button>
+              </Button>
             )
           )}
           {!reorderMode && (
-            <button onClick={openCreate} className="btn-secondary h-7 px-2.5 text-xs">
-              <Plus className="w-3 h-3" />
+            <Button variant="outline" size="sm" className="h-7 px-2.5 text-xs" onClick={openCreate}>
+              <Plus data-icon="inline-start" className="size-3" />
               Add Goal
-            </button>
+            </Button>
           )}
         </div>
       </div>
 
-      {/* Inline create/edit form */}
       {showForm && (
-        <div className="mb-4 card p-4 border-primary/20 ring-1 ring-primary/10">
-          <form onSubmit={handleSubmit} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                {editGoal ? 'Edit Goal' : 'New Goal'}
-              </p>
-              <button
-                type="button"
-                onClick={cancelForm}
-                className="p-1 rounded text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            </div>
-
-            <input
-              autoFocus
-              value={form.title}
-              onChange={(e) => setField('title', e.target.value)}
-              placeholder="Goal title…"
-              className="input"
-              required
-            />
-
-            <textarea
-              value={form.description}
-              onChange={(e) => setField('description', e.target.value)}
-              placeholder="Description (optional)…"
-              rows={2}
-              className="input resize-none text-sm"
-            />
-
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Status</label>
-                <select
-                  value={form.status}
-                  onChange={(e) => setField('status', e.target.value)}
-                  className="input text-sm"
-                >
-                  <option value="active">Active</option>
-                  <option value="on_hold">On Hold</option>
-                  <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
+        <Card className="mb-4 border-primary/20 ring-1 ring-primary/10">
+          <CardContent className="p-4">
+            <form onSubmit={handleSubmit} className="flex flex-col gap-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+                  {editGoal ? 'Edit Goal' : 'New Goal'}
+                </p>
+                <Button type="button" variant="ghost" size="icon" className="size-6" onClick={cancelForm}>
+                  <X className="size-3.5" />
+                </Button>
               </div>
-              <div>
-                <label className="block text-xs text-muted-foreground mb-1">Deadline</label>
-                <HeroDatePickerField
-                  value={form.deadline}
-                  onChange={(v) => setField('deadline', v)}
+
+              <Input
+                autoFocus
+                value={form.title}
+                onChange={(e) => setField('title', e.target.value)}
+                placeholder="Goal title…"
+                required
+              />
+
+              <Textarea
+                value={form.description}
+                onChange={(e) => setField('description', e.target.value)}
+                placeholder="Description (optional)…"
+                rows={2}
+                className="resize-none text-sm"
+              />
+
+              <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-xs text-muted-foreground">Status</Label>
+                  <Select value={form.status} onValueChange={(v) => setField('status', v)}>
+                    <SelectTrigger className="h-9 text-sm">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="on_hold">On Hold</SelectItem>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label className="text-xs text-muted-foreground">Deadline</Label>
+                  <Input
+                    type="date"
+                    value={form.deadline}
+                    onChange={(e) => setField('deadline', e.target.value)}
+                    className="[color-scheme:light] dark:[color-scheme:dark]"
+                  />
+                </div>
+              </div>
+
+              <div className="flex flex-col gap-1.5">
+                <Label className="text-xs text-muted-foreground">
+                  Progress — <span className="font-semibold text-foreground">{form.progress}%</span>
+                </Label>
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  step={5}
+                  value={form.progress}
+                  onChange={(e) => setField('progress', Number(e.target.value))}
+                  className="w-full accent-primary h-1.5"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1.5">
-                Progress — <span className="font-semibold text-foreground">{form.progress}%</span>
-              </label>
-              <input
-                type="range"
-                min={0}
-                max={100}
-                step={5}
-                value={form.progress}
-                onChange={(e) => setField('progress', Number(e.target.value))}
-                className="w-full accent-primary h-1.5"
-              />
-            </div>
-
-            <div className="flex justify-end gap-2 pt-1">
-              <button type="button" onClick={cancelForm} className="btn-secondary text-xs py-1.5 px-3">
-                Cancel
-              </button>
-              <button type="submit" disabled={saving} className="btn-primary text-xs py-1.5 px-3">
-                {saving ? (editGoal ? 'Saving…' : 'Adding…') : (editGoal ? 'Save Goal' : 'Add Goal')}
-              </button>
-            </div>
-          </form>
-        </div>
+              <div className="flex justify-end gap-2 pt-1">
+                <Button type="button" variant="outline" size="sm" onClick={cancelForm}>Cancel</Button>
+                <Button type="submit" size="sm" disabled={saving}>
+                  {saving && <Loader2 data-icon="inline-start" className="animate-spin size-3" />}
+                  {saving ? (editGoal ? 'Saving…' : 'Adding…') : (editGoal ? 'Save Goal' : 'Add Goal')}
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
       )}
 
-      {/* Goals list */}
       {goals.length === 0 && !showForm ? (
         <div className="text-center py-8">
           <p className="text-sm text-muted-foreground">No goals yet.</p>
-          <button onClick={openCreate} className="mt-2 text-xs text-primary hover:underline">
+          <Button variant="link" size="sm" onClick={openCreate} className="mt-1 h-auto p-0 text-xs">
             Add the first goal
-          </button>
+          </Button>
         </div>
       ) : (
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           {goals.map((goal, idx) => (
             <GoalCard
               key={goal.id}
