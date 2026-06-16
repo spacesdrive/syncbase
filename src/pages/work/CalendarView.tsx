@@ -13,6 +13,7 @@ import {
 } from 'date-fns'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { TASK_PRIORITIES } from '../../lib/constants'
+import { Button } from '../../components/ui/button'
 
 export function CalendarView({ tasks }: { tasks: any[] }) {
   const [currentDate, setCurrentDate] = useState(new Date())
@@ -51,25 +52,16 @@ export function CalendarView({ tasks }: { tasks: any[] }) {
         <h3 className="text-base font-semibold text-foreground">
           {format(currentDate, 'MMMM yyyy')}
         </h3>
-        <div className="flex items-center gap-2">
-          <button
-            onClick={prevMonth}
-            className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => setCurrentDate(new Date())}
-            className="text-xs px-3 py-1.5 rounded-lg border border-border text-muted-foreground hover:bg-muted transition-colors"
-          >
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="size-8" onClick={prevMonth}>
+            <ChevronLeft className="size-4" />
+          </Button>
+          <Button variant="outline" size="sm" className="text-xs h-7 px-3" onClick={() => setCurrentDate(new Date())}>
             Today
-          </button>
-          <button
-            onClick={nextMonth}
-            className="p-1.5 rounded-lg text-muted-foreground hover:bg-muted transition-colors"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
+          </Button>
+          <Button variant="ghost" size="icon" className="size-8" onClick={nextMonth}>
+            <ChevronRight className="size-4" />
+          </Button>
         </div>
       </div>
 
@@ -109,7 +101,7 @@ export function CalendarView({ tasks }: { tasks: any[] }) {
                 {format(day, 'd')}
               </div>
 
-              <div className="space-y-0.5">
+              <div className="flex flex-col gap-0.5">
                 {dayTasks.slice(0, 3).map((task) => (
                   <div
                     key={task.id}

@@ -22,7 +22,7 @@ import { api } from '../../lib/api'
 import { useTeam } from '../../contexts/TeamContext'
 import { useAuth } from '../../contexts/AuthContext'
 import { Plus } from 'lucide-react'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 function SortableTask({ task, onUpdate, onDelete }: { task: any; onUpdate?: (u: any) => void; onDelete?: (id: string) => void }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: task.id })
@@ -107,7 +107,7 @@ export function KanbanView({
 
               <div
                 id={col.id}
-                className="bg-muted/40 rounded-xl p-2 min-h-[200px] space-y-2 border border-border"
+                className="bg-muted/40 rounded-xl p-2 min-h-[200px] flex flex-col gap-2 border border-border"
               >
                 <SortableContext items={colTasks.map((t) => t.id)} strategy={verticalListSortingStrategy}>
                   {colTasks.map((task) => (
