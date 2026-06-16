@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Plus, List, Columns, Calendar, Users, ArrowUpDown, CheckSquare, X, Search } from 'lucide-react'
+import { Plus, List, Columns, Calendar, Users, ArrowUpDown, CheckSquare, X } from 'lucide-react'
 import { arrayMove } from '@dnd-kit/sortable'
 import { api } from '../../lib/api'
 import { useTeam } from '../../contexts/TeamContext'
@@ -13,8 +13,18 @@ import { NewTaskModal } from './NewTaskModal'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { FacetedFilter } from '../../components/ui/FacetedFilter'
 import { TASK_PRIORITIES, TASK_STATUSES } from '../../lib/constants'
+import { Button } from '../../components/ui/button'
+import { Input } from '../../components/ui/input'
+import { Tabs, TabsList, TabsTrigger } from '../../components/ui/tabs'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '../../components/ui/select'
 import { cn } from '../../lib/utils'
-import toast from 'react-hot-toast'
+import { toast } from 'sonner'
 
 const SORT_OPTIONS = [
   { id: 'manual', label: 'Manual order' },
@@ -22,12 +32,6 @@ const SORT_OPTIONS = [
   { id: 'due_asc', label: 'Due date ↑' },
   { id: 'due_desc', label: 'Due date ↓' },
   { id: 'priority', label: 'Priority' },
-]
-
-const MODE_OPTIONS = [
-  { id: 'my_tasks', label: 'My Tasks' },
-  { id: 'i_assigned', label: 'I Assigned' },
-  { id: 'all', label: 'All' },
 ]
 
 const PRIORITY_ORDER: Record<string, number> = { high: 0, medium: 1, low: 2 }
@@ -69,6 +73,19 @@ function sortTasks(tasks: any[], sort: string) {
   const terminal = tasks.filter((t) => TERMINAL_STATUSES.has(t.status))
   return [...sortGroup(active, sort), ...sortGroup(terminal, sort)]
 }
+
+const VIEWS = [
+  { id: 'list',     icon: List,     label: 'List' },
+  { id: 'kanban',   icon: Columns,  label: 'Kanban' },
+  { id: 'calendar', icon: Calendar, label: 'Calendar' },
+  { id: 'pods',     icon: Users,    label: 'Pods' },
+]
+
+const MODES = [
+  { id: 'my_tasks',   label: 'My Tasks' },
+  { id: 'i_assigned', label: 'I Assigned' },
+  { id: 'all',        label: 'All' },
+]
 
 export default function Work() {
   const { team, members } = useTeam()
@@ -124,7 +141,7 @@ export default function Work() {
     })
     try {
       const projectId = reordered[0]?.project_id ?? null
-      await api.reorderTasks(team.id, projectId, reordered.map((t) => t.id))
+      await api.reorderTasks(team!.id, projectId, reordered.map((t) => t.id))
     } catch (err: any) {
       toast.error(err.message)
       loadTasks()
@@ -143,7 +160,7 @@ export default function Work() {
     }
     return result
   }, [sortedTasks, filters.priority, filters.status, search])
-  // Counts for filter dropdowns (from unfiltered task list)
+
   const priorityCounts = useMemo(() =>
     tasks.reduce((acc, t) => { acc[t.priority] = (acc[t.priority] || 0) + 1; return acc }, {} as Record<string, number>)
   , [tasks])
@@ -151,87 +168,83 @@ export default function Work() {
     tasks.reduce((acc, t) => { acc[t.status] = (acc[t.status] || 0) + 1; return acc }, {} as Record<string, number>)
   , [tasks])
 
-  const views = [
-    { id: 'list',     icon: List,     label: 'List' },
-    { id: 'kanban',   icon: Columns,  label: 'Kanban' },
-    { id: 'calendar', icon: Calendar, label: 'Calendar' },
-    { id: 'pods',     icon: Users,    label: 'Pods' },
-  ]
-
   return (
-    <div className="page-container-mobile">
+    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
 
       {/* Page header */}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="section-title">Tasks</h2>
-          <p className="section-subtitle mt-0.5">
+          <h2 className="text-lg font-semibold tracking-tight">Tasks</h2>
+          <p className="text-sm text-muted-foreground mt-0.5">
             {tasks.length} {tasks.length === 1 ? 'task' : 'tasks'}
           </p>
         </div>
         <div className="flex items-center gap-2">
           {/* View switcher */}
           <div className="flex items-center gap-0.5 rounded-lg border border-border bg-muted p-1">
-            {views.map(({ id, icon: Icon, label }) => (
-              <button
+            {VIEWS.map(({ id, icon: Icon, label }) => (
+              <Button
                 key={id}
+                variant="ghost"
+                size="sm"
                 onClick={() => setView(id)}
                 title={label}
                 className={cn(
-                  'flex items-center justify-center gap-1.5 rounded-md px-2.5 py-1.5 text-xs font-medium transition-all duration-150',
+                  'h-7 px-2.5 text-xs font-medium',
                   view === id
-                    ? 'bg-background text-foreground shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground'
+                    ? 'bg-background text-foreground shadow-sm hover:bg-background'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-transparent'
                 )}
               >
-                <Icon className="w-3.5 h-3.5" />
+                <Icon className="size-3.5" />
                 <span className="hidden sm:inline">{label}</span>
-              </button>
+              </Button>
             ))}
           </div>
-          <button
+          <Button
+            size="sm"
             onClick={() => { setDefaultStatus('todo'); setShowModal(true) }}
-            className="btn-primary"
           >
-            <Plus className="w-4 h-4" />
-            <span>New Task</span>
-          </button>
+            <Plus data-icon="inline-start" />
+            New Task
+          </Button>
         </div>
       </div>
 
       {/* Mode tabs */}
-      <div className="tab-bar mb-4">
-        {MODE_OPTIONS.map((m) => (
-          <button
-            key={m.id}
-            onClick={() => setMode(m.id)}
-            className={cn('tab-item', mode === m.id ? 'tab-item-active' : 'tab-item-inactive')}
-          >
-            {m.label}
-          </button>
-        ))}
-      </div>
+      <Tabs value={mode} onValueChange={setMode} className="mb-4">
+        <TabsList>
+          {MODES.map((m) => (
+            <TabsTrigger key={m.id} value={m.id}>
+              {m.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+      </Tabs>
 
       {/* Toolbar: search + filters + sort */}
       <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        {/* Left: search + filters */}
         <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:gap-x-2">
           {/* Search */}
-          <label className="flex h-8 w-full items-center gap-1.5 rounded-md border border-border bg-background px-2 text-sm sm:w-60 focus-within:ring-1 focus-within:ring-ring">
-            <Search className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
-            <input
+          <div className="relative w-full sm:w-60">
+            <Input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Filter tasks..."
-              className="flex-1 bg-transparent text-sm placeholder:text-muted-foreground focus-visible:outline-none"
+              className="h-8 pr-8 text-sm"
             />
             {search && (
-              <button onClick={() => setSearch('')} className="text-muted-foreground hover:text-foreground">
-                <X className="w-3 h-3" />
-              </button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSearch('')}
+                className="absolute right-0 top-0 size-8 text-muted-foreground hover:text-foreground"
+              >
+                <X className="size-3" />
+              </Button>
             )}
-          </label>
+          </div>
 
           {/* Faceted filters */}
           <div className="flex gap-x-2">
@@ -250,26 +263,31 @@ export default function Work() {
           </div>
 
           {(activeFilters || search) && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => { setFilters({ priority: [], status: [] }); setSearch('') }}
-              className="flex h-8 items-center gap-1.5 rounded-md px-2 text-xs text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+              className="h-8 px-2 text-xs text-muted-foreground"
             >
               Reset
-              <X className="w-3.5 h-3.5" />
-            </button>
+              <X className="size-3.5" />
+            </Button>
           )}
         </div>
 
-        {/* Right: sort */}
+        {/* Sort */}
         <div className="flex items-center gap-2 shrink-0">
-          <ArrowUpDown className="w-3.5 h-3.5 shrink-0 text-muted-foreground" />
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            className="filter-select shrink-0"
-          >
-            {SORT_OPTIONS.map((o) => <option key={o.id} value={o.id}>{o.label}</option>)}
-          </select>
+          <ArrowUpDown className="size-3.5 shrink-0 text-muted-foreground" />
+          <Select value={sort} onValueChange={setSort}>
+            <SelectTrigger className="h-8 w-40 text-sm">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {SORT_OPTIONS.map((o) => (
+                <SelectItem key={o.id} value={o.id}>{o.label}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
@@ -289,20 +307,19 @@ export default function Work() {
           }
           action={
             (activeFilters || search) ? (
-              <button onClick={() => { setFilters({ priority: [], status: [] }); setSearch('') }} className="btn-secondary">
+              <Button variant="secondary" onClick={() => { setFilters({ priority: [], status: [] }); setSearch('') }}>
                 Clear filters
-              </button>
+              </Button>
             ) : (
-              <button onClick={() => setShowModal(true)} className="btn-primary">
-                <Plus className="w-4 h-4" />
+              <Button onClick={() => setShowModal(true)}>
+                <Plus className="size-4" />
                 Create task
-              </button>
+              </Button>
             )
           }
         />
       ) : view === 'list' ? (
         <>
-          {/* Mobile: card-based list (same as ProjectDetail) */}
           <div className="sm:hidden">
             <SortableTaskList
               tasks={displayedTasks}
@@ -311,7 +328,6 @@ export default function Work() {
               onReorder={sort === 'manual' ? handleReorder : undefined}
             />
           </div>
-          {/* Desktop: full table view */}
           <div className="hidden sm:block">
             <TaskTableView tasks={displayedTasks} onUpdate={handleUpdate} onDelete={handleDelete} draggable={sort === 'manual'} />
           </div>

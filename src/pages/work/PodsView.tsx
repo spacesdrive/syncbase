@@ -54,7 +54,7 @@ export function PodsView({
             </span>
           </div>
 
-          <div className="space-y-2 flex-1">
+          <div className="flex flex-col gap-2 flex-1">
             {memberTasks.length === 0 ? (
               <div className="text-center py-8 text-muted-foreground text-xs">
                 No tasks assigned
@@ -87,7 +87,7 @@ export function PodsView({
               {unassigned.length}
             </span>
           </div>
-          <div className="space-y-2">
+          <div className="flex flex-col gap-2">
             {unassigned.map((task) => (
               <TaskCard
                 key={task.id}

@@ -60,7 +60,7 @@ export function SortableTaskList({
   return (
     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
       <SortableContext items={tasks.map((task) => task.id)} strategy={verticalListSortingStrategy}>
-        <div className="space-y-3">
+        <div className="flex flex-col gap-3">
           {tasks.map((task) => (
             <SortableTaskCard key={task.id} task={task} onUpdate={onUpdate} onDelete={onDelete} />
           ))}
