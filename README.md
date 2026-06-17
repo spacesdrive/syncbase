@@ -13,7 +13,7 @@
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-v4-38BDF8?style=flat-square&logo=tailwindcss&logoColor=white)](https://tailwindcss.com)
 [![Vite](https://img.shields.io/badge/Vite-8-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vite.dev)
 
-[Live Demo](syncbase.spacesdrive.cc) · [Report a Bug](https://github.com/spacesdrive/syncbase/issues/new?labels=bug&template=bug_report.md) · [Request a Feature](https://github.com/spacesdrive/syncbase/issues/new?labels=enhancement&template=feature_request.md) · [Contributing](#contributing)
+[Live Demo](https://syncbase.spacesdrive.cc) · [Report a Bug](https://github.com/spacesdrive/syncbase/issues/new?labels=bug&template=bug_report.md) · [Request a Feature](https://github.com/spacesdrive/syncbase/issues/new?labels=enhancement&template=feature_request.md) · [Contributing](#contributing)
 
 </div>
 
